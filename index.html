@@ -1,0 +1,1786 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#047857">
+<meta name="robots" content="noindex, nofollow">
+<title>BN SMART ศสมช.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{
+  --em-50:#ecfdf5;--em-100:#d1fae5;--em-200:#a7f3d0;--em-500:#10b981;--em-600:#059669;--em-700:#047857;--em-800:#065f46;--em-900:#064e3b;
+  --blue-50:#eff6ff;--blue-100:#dbeafe;--blue-500:#0ea5e9;--blue-600:#0284c7;--blue-700:#1d4ed8;
+  --orange-50:#fff7ed;--orange-500:#f97316;--orange-600:#ea580c;
+  --purple-50:#f5f3ff;--purple-500:#8b5cf6;--purple-600:#7c3aed;--purple-700:#6d28d9;
+  --red-50:#fef2f2;--red-600:#dc2626;--amber-50:#fffbeb;--amber-600:#d97706;
+  --bg:#f3f6f5;--surface:#ffffff;--surface-2:#f8faf9;--ink:#0f172a;--ink-2:#334155;--muted:#64748b;--line:#e2e8f0;--line-2:#eef2f1;
+  --good:#0ca30c;--warning:#fab219;--serious:#ec835a;--critical:#d03b3b;
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#6250d6;--s8:#e34948;
+  --radius:16px;--radius-sm:10px;--shadow:0 1px 2px rgba(15,23,42,.04),0 4px 16px rgba(15,23,42,.06);--shadow-lg:0 10px 40px rgba(15,23,42,.14);
+  --sidebar:268px;--topbar:64px;
+  --font:'Prompt',system-ui,-apple-system,'Segoe UI',sans-serif;--font-head:'Kanit','Prompt',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.55;min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--font-head);font-weight:500;margin:0;line-height:1.3}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--em-700)}
+[hidden]{display:none!important}
+svg.lucide{width:18px;height:18px;stroke-width:2;flex-shrink:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- buttons & inputs ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:8px 16px;border-radius:12px;border:1px solid transparent;background:var(--surface);color:var(--ink-2);cursor:pointer;font-weight:500;font-size:.92rem;transition:.15s;white-space:nowrap;text-decoration:none}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(135deg,var(--em-600),var(--em-700));color:#fff;box-shadow:0 4px 14px rgba(5,150,105,.3)}
+.btn-blue{background:linear-gradient(135deg,var(--blue-600),var(--blue-700));color:#fff}
+.btn-purple{background:linear-gradient(135deg,var(--purple-500),var(--purple-700));color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.28)}
+.btn-orange{background:linear-gradient(135deg,var(--orange-500),var(--orange-600));color:#fff}
+.btn-outline{border-color:var(--line);background:var(--surface)}
+.btn-outline:hover{border-color:var(--em-500);color:var(--em-700)}
+.btn-ghost{background:transparent}
+.btn-ghost:hover{background:var(--line-2)}
+.btn-danger{background:var(--red-50);color:var(--red-600);border-color:#fecaca}
+.btn-sm{min-height:34px;padding:5px 12px;font-size:.85rem;border-radius:10px}
+.btn-icon{width:40px;padding:0}
+.btn-block{width:100%}
+.input,select.input,textarea.input{width:100%;min-height:44px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;outline:none;transition:.15s;font-size:.95rem}
+textarea.input{min-height:84px;resize:vertical}
+.input:focus{border-color:var(--em-500);box-shadow:0 0 0 3px rgba(16,185,129,.15)}
+.input.invalid{border-color:var(--critical);box-shadow:0 0 0 3px rgba(208,59,59,.12)}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-size:.84rem;color:var(--ink-2);font-weight:500}
+.field .req{color:var(--critical)}
+.field .hint{font-size:.76rem;color:var(--muted)}
+.field .err{font-size:.78rem;color:var(--critical)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.form-grid .full{grid-column:1/-1}
+
+/* ---------- login ---------- */
+#loginScreen{position:fixed;inset:0;z-index:50;display:grid;grid-template-columns:1.1fr 1fr;background:var(--bg);overflow:auto}
+.login-hero{position:relative;background:radial-gradient(circle at 20% 20%,rgba(255,255,255,.18),transparent 40%),linear-gradient(145deg,var(--em-800),var(--em-600) 55%,var(--blue-600));color:#fff;padding:48px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.login-hero::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:rgba(255,255,255,.07);right:-120px;bottom:-120px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.18);display:grid;place-items:center;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.3)}
+.brand-logo svg{width:26px;height:26px}
+.login-hero h1{font-size:2.3rem;margin:28px 0 10px}
+.login-hero p{opacity:.9;max-width:520px}
+.concepts{display:grid;gap:12px;margin-top:28px;position:relative;z-index:1}
+.concept{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:12px 14px;backdrop-filter:blur(6px)}
+.concept b{font-family:var(--font-head);font-weight:500;letter-spacing:.3px}
+.concept small{display:block;opacity:.85}
+.login-side{display:flex;align-items:center;justify-content:center;padding:32px 20px}
+.login-card{width:100%;max-width:420px;background:var(--surface);border-radius:24px;box-shadow:var(--shadow-lg);padding:32px 28px;border:1px solid var(--line)}
+.login-card h2{font-size:1.5rem}
+.login-card .sub{color:var(--muted);margin:4px 0 22px;font-size:.92rem}
+.pw-wrap{position:relative}
+.pw-wrap .btn{position:absolute;right:4px;top:2px;height:40px}
+.api-status{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--muted);margin-top:16px;padding:10px 12px;border-radius:12px;background:var(--surface-2);border:1px dashed var(--line)}
+.dot{width:9px;height:9px;border-radius:50%;background:#cbd5e1;flex-shrink:0}
+.dot.ok{background:var(--good)}.dot.bad{background:var(--critical)}.dot.wait{background:var(--warning)}
+.alert{display:flex;gap:10px;align-items:flex-start;padding:11px 14px;border-radius:12px;font-size:.88rem;margin-bottom:14px}
+.alert-error{background:var(--red-50);color:#991b1b;border:1px solid #fecaca}
+.alert-warn{background:var(--amber-50);color:#92400e;border:1px solid #fde68a}
+.alert-info{background:var(--blue-50);color:#1e40af;border:1px solid var(--blue-100)}
+.alert-ai{background:var(--purple-50);color:#4c1d95;border:1px solid #ddd6fe}
+.alert-ok{background:var(--em-50);color:var(--em-800);border:1px solid var(--em-200)}
+
+/* ---------- shell ---------- */
+.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar);background:linear-gradient(180deg,var(--em-900),#053b2d 60%,#042f25);color:#d1fae5;display:flex;flex-direction:column;z-index:40;transition:transform .25s}
+.sb-head{padding:18px 18px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-head .brand-logo{width:42px;height:42px;background:linear-gradient(135deg,var(--em-500),var(--blue-500));border:0}
+.sb-title{font-family:var(--font-head);color:#fff;font-size:1.08rem;line-height:1.2}
+.sb-title small{display:block;font-family:var(--font);font-size:.72rem;color:#a7f3d0;opacity:.85}
+.sb-nav{flex:1;overflow-y:auto;padding:10px 10px 20px;scrollbar-width:thin}
+.sb-group{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:#6ee7b7;opacity:.7;padding:14px 12px 6px}
+.sb-link{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:11px;color:#d1fae5;text-decoration:none;font-size:.9rem;cursor:pointer;transition:.15s;border:0;background:none;width:100%;text-align:left}
+.sb-link:hover{background:rgba(255,255,255,.07);color:#fff}
+.sb-link.active{background:linear-gradient(90deg,rgba(16,185,129,.35),rgba(16,185,129,.08));color:#fff;box-shadow:inset 3px 0 0 #34d399}
+.sb-link small{display:block;font-size:.7rem;opacity:.65;line-height:1.1}
+.sb-foot{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:.74rem;color:#6ee7b7;opacity:.8}
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:35;backdrop-filter:blur(2px)}
+.main{margin-left:var(--sidebar);min-height:100vh;display:flex;flex-direction:column;min-width:0}
+.topbar{position:sticky;top:0;z-index:30;height:var(--topbar);display:flex;align-items:center;gap:10px;padding:0 22px;background:rgba(255,255,255,.78);backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid rgba(226,232,240,.8)}
+.crumb{display:flex;align-items:center;gap:6px;font-size:.86rem;color:var(--muted);min-width:0;flex:1;overflow:hidden;white-space:nowrap}
+.crumb b{color:var(--ink);font-weight:500;overflow:hidden;text-overflow:ellipsis}
+.crumb svg{width:14px;height:14px}
+.tb-actions{display:flex;align-items:center;gap:6px}
+.icon-btn{position:relative;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--ink-2)}
+.icon-btn:hover{border-color:var(--em-500);color:var(--em-700)}
+.badge-count{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--critical);color:#fff;font-size:.68rem;display:grid;place-items:center;font-weight:600;border:2px solid #fff}
+.profile-btn{display:flex;align-items:center;gap:10px;padding:4px 10px 4px 4px;border-radius:14px;border:1px solid var(--line);background:#fff;cursor:pointer;max-width:240px}
+.avatar{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--em-500),var(--blue-600));color:#fff;display:grid;place-items:center;font-family:var(--font-head);flex-shrink:0}
+.profile-btn .pinfo{text-align:left;line-height:1.15;min-width:0}
+.profile-btn .pinfo b{display:block;font-size:.85rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-btn .pinfo small{font-size:.72rem;color:var(--muted)}
+.dropdown{position:fixed;top:calc(var(--topbar) + 4px);right:16px;width:340px;max-width:calc(100vw - 32px);background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-lg);z-index:45;overflow:hidden}
+.dd-head{padding:14px 16px;border-bottom:1px solid var(--line-2);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.dd-body{max-height:420px;overflow-y:auto}
+.dd-item{display:flex;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line-2);cursor:pointer;font-size:.88rem;align-items:flex-start;width:100%;background:none;border-left:0;border-right:0;border-top:0;text-align:left}
+.dd-item:hover{background:var(--surface-2)}
+.dd-item.unread{background:#f0fdf9}
+.dd-item small{color:var(--muted);display:block}
+.content{padding:22px;flex:1;min-width:0;max-width:1600px;width:100%;margin:0 auto}
+.topprogress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--em-500),var(--blue-500),var(--purple-500));z-index:100;transition:width .3s,opacity .4s;width:0;opacity:0}
+.offline-bar{position:fixed;left:50%;transform:translateX(-50%);top:calc(var(--topbar) + 8px);pointer-events:none;width:max-content;max-width:calc(100vw - 24px);z-index:101;background:#1e293b;color:#fff;padding:8px 16px;border-radius:30px;font-size:.85rem;display:flex;gap:8px;align-items:center;box-shadow:var(--shadow-lg)}
+.bottom-nav{display:none}
+
+/* ---------- page parts ---------- */
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.page-head h1{font-size:1.55rem;display:flex;align-items:center;gap:10px}
+.page-head h1 .ph-icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--em-500),var(--em-700));color:#fff;box-shadow:0 6px 16px rgba(5,150,105,.25)}
+.page-head h1 .ph-icon.purple{background:linear-gradient(135deg,var(--purple-500),var(--purple-700));box-shadow:0 6px 16px rgba(124,58,237,.25)}
+.page-head p{color:var(--muted);margin:4px 0 0;font-size:.9rem}
+.head-actions{display:flex;gap:8px;flex-wrap:wrap}
+.card{background:var(--surface);border:1px solid rgba(226,232,240,.9);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;min-width:0}
+.card-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.card-title h3{font-size:1.02rem;display:flex;align-items:center;gap:8px}
+.card-title small{color:var(--muted);font-size:.8rem}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.mb{margin-bottom:16px}
+.muted{color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;padding:3px 10px;border-radius:20px;background:var(--line-2);color:var(--ink-2);white-space:nowrap}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;padding:3px 10px 3px 8px;border-radius:20px;background:var(--line-2);color:var(--ink-2);white-space:nowrap;font-weight:500}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.9}
+.st-good{background:#e7f6e7;color:#076b07}.st-warn{background:#fff5db;color:#8a5a00}.st-serious{background:#fdeee7;color:#b4471c}.st-critical{background:#fbe7e7;color:#a32626}.st-info{background:var(--blue-50);color:#1e40af}.st-purple{background:var(--purple-50);color:var(--purple-700)}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-bottom:18px}
+.kpi{position:relative;overflow:hidden;background:var(--surface);border:1px solid rgba(226,232,240,.9);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);display:flex;gap:14px;align-items:center;min-width:0}
+.kpi::after{content:"";position:absolute;right:-28px;top:-28px;width:90px;height:90px;border-radius:50%;background:var(--kc-soft,var(--em-50));opacity:.7}
+.kpi-icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;color:#fff;background:var(--kc,var(--em-600));flex-shrink:0;box-shadow:0 6px 14px -4px var(--kc,var(--em-600));position:relative;z-index:1}
+.kpi-icon svg{width:22px;height:22px}
+.kpi-body{min-width:0;position:relative;z-index:1}
+.kpi-label{font-size:.82rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-value{font-family:var(--font-head);font-size:1.7rem;font-weight:500;line-height:1.15;color:var(--ink)}
+.kpi-sub{font-size:.75rem;color:var(--muted)}
+.k-em{--kc:var(--em-600);--kc-soft:var(--em-50)}.k-blue{--kc:var(--blue-600);--kc-soft:var(--blue-50)}.k-orange{--kc:var(--orange-500);--kc-soft:var(--orange-50)}.k-red{--kc:#e11d48;--kc-soft:#fff1f2}.k-purple{--kc:var(--purple-600);--kc-soft:var(--purple-50)}.k-amber{--kc:var(--amber-600);--kc-soft:var(--amber-50)}.k-teal{--kc:#0d9488;--kc-soft:#f0fdfa}.k-indigo{--kc:#4f46e5;--kc-soft:#eef2ff}
+.skeleton{background:linear-gradient(90deg,#eef2f1 25%,#f7f9f8 50%,#eef2f1 75%);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:10px}
+@keyframes sk{to{background-position:-200% 0}}
+
+/* filters */
+.filter-card{margin-bottom:18px;background:rgba(255,255,255,.85);backdrop-filter:blur(8px)}
+.filter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.filter-grid .field label{font-size:.76rem;color:var(--muted)}
+.filter-grid .input{min-height:40px;padding:7px 10px;font-size:.88rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{min-height:34px;padding:5px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:.84rem;color:var(--ink-2);transition:.15s}
+.chip:hover{border-color:var(--em-500)}
+.chip.active{background:var(--em-600);border-color:var(--em-600);color:#fff}
+.active-filters{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px;font-size:.84rem;color:var(--muted)}
+.active-filters .tag{background:var(--em-50);color:var(--em-800)}
+.filter-toggle{display:none}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.toolbar .field{min-width:150px;flex:1 1 150px}
+.toolbar .field.search{flex:2 1 240px}
+.search-box{position:relative}
+.search-box svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search-box .input{padding-left:38px}
+details.vsel{position:relative}
+details.vsel summary{list-style:none;cursor:pointer;min-height:40px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:.88rem;display:flex;align-items:center;justify-content:space-between;gap:6px}
+details.vsel summary::-webkit-details-marker{display:none}
+details.vsel[open] summary{border-color:var(--em-500)}
+.vsel-pop{position:absolute;z-index:20;top:calc(100% + 6px);left:0;width:250px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-lg);padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.vsel-pop label{display:flex;gap:6px;align-items:center;font-size:.84rem;padding:6px;border-radius:8px;cursor:pointer}
+.vsel-pop label:hover{background:var(--surface-2)}
+.vsel-pop .all{grid-column:1/-1;border-bottom:1px solid var(--line-2);margin-bottom:4px}
+
+/* tabs */
+.tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.tab{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;white-space:nowrap;font-size:.9rem;color:var(--ink-2)}
+.tab.active{background:var(--em-700);color:#fff;border-color:var(--em-700)}
+
+/* tables */
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line-2);-webkit-overflow-scrolling:touch}
+table.dtable{width:100%;border-collapse:collapse;font-size:.88rem;background:#fff}
+.dtable th{background:var(--surface-2);text-align:left;font-weight:500;color:var(--ink-2);padding:11px 12px;white-space:nowrap;border-bottom:1px solid var(--line);font-size:.82rem;position:sticky;top:0}
+.dtable td{padding:10px 12px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+.dtable tbody tr:hover{background:#f8fffb}
+.dtable tr.total td{font-weight:600;background:var(--em-50)}
+.dtable td.num,.dtable th.num{text-align:right;font-variant-numeric:tabular-nums}
+.dtable .cell-name b{display:block;font-weight:500}
+.dtable .cell-name small{color:var(--muted)}
+.row-actions{display:flex;gap:4px;justify-content:flex-end}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;font-size:.86rem;color:var(--muted)}
+.pager .pg{display:flex;gap:6px;align-items:center}
+.summary-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.sum-pill{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:14px;background:#fff;border:1px solid var(--line);font-size:.85rem;cursor:pointer}
+.sum-pill b{font-family:var(--font-head);font-weight:500;font-size:1.05rem}
+.sum-pill.period{background:linear-gradient(135deg,var(--blue-50),#fff);cursor:default}
+.sum-pill.active{border-color:var(--em-600);box-shadow:0 0 0 2px var(--em-100)}
+
+/* empty / error / loading */
+.state{padding:44px 20px;text-align:center;color:var(--muted)}
+.state .s-icon{width:64px;height:64px;border-radius:20px;margin:0 auto 12px;display:grid;place-items:center;background:var(--em-50);color:var(--em-600)}
+.state .s-icon svg{width:30px;height:30px}
+.state.error .s-icon{background:var(--red-50);color:var(--critical)}
+.state h3{color:var(--ink);font-size:1.05rem;margin-bottom:4px}
+.spinner{width:34px;height:34px;border:3px solid var(--em-100);border-top-color:var(--em-600);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* charts */
+.chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:18px}
+.chart-grid .wide{grid-column:1/-1}
+.chart-box{position:relative;height:290px}
+.chart-box.tall{height:340px}
+.chart-box.is-empty canvas{opacity:.08}
+.chart-box.is-empty::after{content:"ไม่มีข้อมูลตามเงื่อนไขที่เลือก";position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:.9rem}
+
+/* modal */
+.modal-back{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(3px);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:4vh 16px;overflow-y:auto}
+.modal{background:#fff;border-radius:22px;width:100%;max-width:760px;box-shadow:var(--shadow-lg);animation:pop .18s ease-out;display:flex;flex-direction:column;max-height:92vh}
+.modal.sm{max-width:460px}.modal.lg{max-width:1000px}
+@keyframes pop{from{transform:translateY(10px) scale(.98);opacity:0}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:18px 22px;border-bottom:1px solid var(--line-2)}
+.modal-head h3{font-size:1.15rem;display:flex;gap:10px;align-items:center}
+.modal-body{padding:20px 22px;overflow-y:auto}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid var(--line-2);flex-wrap:wrap}
+.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 20px}
+.detail-grid .di{padding:9px 0;border-bottom:1px dashed var(--line-2);min-width:0}
+.detail-grid .di.full{grid-column:1/-1}
+.detail-grid .di span{display:block;font-size:.76rem;color:var(--muted)}
+.detail-grid .di div{word-break:break-word;white-space:pre-wrap}
+.detail-grid .di.computed div{color:var(--purple-700);font-weight:500}
+.person-pick{position:relative}
+.pp-results{position:absolute;z-index:5;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);max-height:280px;overflow-y:auto}
+.pp-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid var(--line-2);font-size:.88rem;width:100%;text-align:left;background:none;border-left:0;border-right:0;border-top:0;display:block}
+.pp-item:hover{background:var(--em-50)}
+.pp-item small{color:var(--muted)}
+.pp-selected{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--em-200);background:var(--em-50);border-radius:12px}
+.profile-head{display:flex;gap:16px;align-items:center;padding:16px;border-radius:16px;background:linear-gradient(135deg,var(--em-50),var(--blue-50));margin-bottom:16px;flex-wrap:wrap}
+.profile-head .avatar{width:56px;height:56px;border-radius:16px;font-size:1.4rem}
+.timeline-sec{border:1px solid var(--line-2);border-radius:14px;margin-bottom:12px;overflow:hidden}
+.timeline-sec > summary{padding:12px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--surface-2);list-style:none;font-weight:500}
+.timeline-sec > summary::-webkit-details-marker{display:none}
+
+/* toast */
+#toasts{position:fixed;right:18px;bottom:18px;z-index:200;display:flex;flex-direction:column;gap:10px;max-width:min(400px,calc(100vw - 36px))}
+.toast{display:flex;gap:10px;align-items:flex-start;background:#fff;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow-lg);border-left:4px solid var(--em-600);font-size:.9rem;animation:pop .2s}
+.toast.error{border-color:var(--critical)}.toast.warn{border-color:var(--warning)}.toast.info{border-color:var(--blue-600)}
+.toast .t-icon{color:var(--em-600)}.toast.error .t-icon{color:var(--critical)}.toast.warn .t-icon{color:var(--amber-600)}.toast.info .t-icon{color:var(--blue-600)}
+
+/* import */
+.steps{display:grid;gap:16px}
+.step{position:relative}
+.step-num{width:30px;height:30px;border-radius:10px;background:var(--em-600);color:#fff;display:grid;place-items:center;font-family:var(--font-head);flex-shrink:0}
+.step.disabled{opacity:.5;pointer-events:none}
+.dropzone{border:2px dashed var(--em-200);border-radius:18px;padding:30px 16px;text-align:center;background:linear-gradient(180deg,#f8fffc,#fff);cursor:pointer;transition:.15s}
+.dropzone.drag{border-color:var(--em-600);background:var(--em-50)}
+.dropzone svg{width:40px;height:40px;color:var(--em-600)}
+.progress{height:10px;background:var(--line-2);border-radius:10px;overflow:hidden}
+.progress > div{height:100%;background:linear-gradient(90deg,var(--em-500),var(--blue-500));transition:width .3s}
+.stat-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.stat-tile{border-radius:14px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--line-2)}
+.stat-tile b{display:block;font-family:var(--font-head);font-size:1.5rem;font-weight:500}
+.stat-tile span{font-size:.8rem;color:var(--muted)}
+
+/* ai */
+.ai-hero{background:linear-gradient(135deg,#4c1d95,var(--purple-600) 50%,var(--blue-600));color:#fff;border-radius:20px;padding:22px;margin-bottom:16px;position:relative;overflow:hidden}
+.ai-hero::after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08);right:-60px;top:-80px}
+.ai-list{margin:0;padding-left:20px}
+.ai-list li{margin-bottom:8px}
+
+/* print */
+#printArea{display:none}
+@media print{
+  body{background:#fff}
+  .sidebar,.topbar,.bottom-nav,.no-print,#toasts,.filter-card .filter-toggle,.head-actions,.overlay,.topprogress{display:none!important}
+  .main{margin:0}
+  .content{padding:0;max-width:none}
+  .card,.kpi{box-shadow:none;break-inside:avoid}
+  body.printing > *:not(#printArea){display:none!important}
+  body.printing #printArea{display:block!important}
+  .chart-grid{grid-template-columns:1fr 1fr}
+}
+.print-doc{font-family:var(--font);color:#000;padding:10px}
+.print-doc h1{font-size:20px;margin-bottom:4px}
+.print-doc table{width:100%;border-collapse:collapse;font-size:11px;margin:10px 0}
+.print-doc th,.print-doc td{border:1px solid #999;padding:4px 6px;text-align:left}
+.print-doc .meta{font-size:11px;color:#444;margin-bottom:10px}
+
+/* ---------- responsive ---------- */
+@media (max-width:1180px){
+  .sidebar{transform:translateX(-100%);box-shadow:var(--shadow-lg)}
+  body.sb-open .sidebar{transform:none}
+  .main{margin-left:0}
+  .g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g3{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (min-width:1181px){ .only-mobile-nav{display:none!important} }
+@media (max-width:900px){
+  #loginScreen{grid-template-columns:1fr}
+  .login-hero{padding:28px 22px}
+  .login-hero h1{font-size:1.6rem;margin-top:16px}
+  .concepts{display:none}
+  .chart-grid,.g2,.g3{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:760px){
+  body{font-size:15px}
+  .content{padding:14px 14px 96px}
+  .topbar{padding:0 12px;gap:6px}
+  .profile-btn .pinfo{display:none}
+  .profile-btn{padding:4px}
+  .page-head h1{font-size:1.25rem}
+  .page-head h1 .ph-icon{width:34px;height:34px}
+  .head-actions{width:100%}
+  .head-actions .btn{flex:1 1 auto}
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .kpi{padding:12px;gap:10px;flex-direction:column;align-items:flex-start}
+  .kpi-icon{width:38px;height:38px;border-radius:12px}
+  .kpi-value{font-size:1.4rem}
+  .g4{grid-template-columns:minmax(0,1fr)}
+  .form-grid,.detail-grid{grid-template-columns:minmax(0,1fr)}
+  .filter-toggle{display:flex}
+  .filter-card.collapsed .filter-body{display:none}
+  .chart-box{height:250px}
+  .modal-back{padding:0;align-items:flex-end}
+  .modal{border-radius:22px 22px 0 0;max-height:94vh}
+  .modal-foot .btn{flex:1}
+  .bottom-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;bottom:0;left:0;right:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  .bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.68rem;color:var(--muted);background:none;border:0;padding:6px 2px;border-radius:12px;cursor:pointer;min-height:52px;justify-content:center}
+  .bn-item svg{width:22px;height:22px}
+  .bn-item.active{color:var(--em-700);background:var(--em-50)}
+  #toasts{left:12px;right:12px;bottom:84px;max-width:none}
+  /* tables -> cards */
+  table.dtable.cards thead{display:none}
+  table.dtable.cards,table.dtable.cards tbody,table.dtable.cards tr,table.dtable.cards td{display:block;width:100%}
+  table.dtable.cards{background:transparent}
+  .table-wrap.cards-wrap{border:0;overflow:visible}
+  table.dtable.cards tr{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;padding:8px 14px;box-shadow:var(--shadow)}
+  table.dtable.cards td{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:7px 0;border-bottom:1px dashed var(--line-2);text-align:right;min-height:36px}
+  table.dtable.cards td:last-child{border-bottom:0}
+  table.dtable.cards td::before{content:attr(data-label);color:var(--muted);font-size:.78rem;text-align:left;flex-shrink:0;max-width:45%}
+  table.dtable.cards td.cell-name{text-align:right}
+  table.dtable.cards .row-actions{width:100%;justify-content:stretch}
+  table.dtable.cards .row-actions .btn{flex:1}
+  .dropdown{right:8px;left:8px;width:auto;max-width:none}
+  .vsel-pop{width:min(260px,calc(100vw - 40px))}
+}
+</style>
+</head>
+<body>
+<div class="topprogress" id="topprogress"></div>
+<div class="offline-bar" id="offlineBar" hidden><i data-lucide="wifi-off"></i> ไม่มีการเชื่อมต่ออินเทอร์เน็ต — ข้อมูลที่กรอกไว้จะยังไม่ถูกบันทึก</div>
+
+<!-- ======================= LOGIN ======================= -->
+<section id="loginScreen">
+  <div class="login-hero">
+    <div>
+      <div class="brand"><div class="brand-logo"><i data-lucide="heart-pulse"></i></div><div><b style="font-family:var(--font-head);font-size:1.2rem">BN SMART ศสมช.</b><div style="font-size:.8rem;opacity:.85">Buengniam Smart Community Health Center</div></div></div>
+      <h1>ระบบบริหารจัดการบริการสุขภาพชุมชนอัจฉริยะ</h1>
+      <p>สำหรับเครือข่าย อสม. 12 หมู่บ้าน ตำบลบึงเนียม อำเภอเมืองขอนแก่น จังหวัดขอนแก่น บริหารจัดการและกำกับติดตามโดย รพ.สต.บึงเนียม</p>
+      <div class="concepts">
+        <div class="concept"><i data-lucide="user"></i><div><b>ONE PERSON ONE HEALTH PROFILE</b><small>ประชาชนหนึ่งคน มีประวัติสุขภาพเชื่อมโยงทุกบริการ</small></div></div>
+        <div class="concept"><i data-lucide="network"></i><div><b>ONE VILLAGE ONE HEALTH NETWORK</b><small>12 หมู่บ้านเชื่อมโยงกับ รพ.สต.บึงเนียม</small></div></div>
+        <div class="concept"><i data-lucide="layout-dashboard"></i><div><b>ONE DATA ONE DASHBOARD</b><small>บันทึกครั้งเดียว ใช้วิเคราะห์ ติดตาม และรายงานได้ทันที</small></div></div>
+      </div>
+    </div>
+    <small style="opacity:.75;position:relative;z-index:1">ข้อมูลสุขภาพเป็นข้อมูลส่วนบุคคลอ่อนไหวตาม พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562</small>
+  </div>
+  <div class="login-side">
+    <form class="login-card" id="loginForm" autocomplete="on" novalidate>
+      <h2>เข้าสู่ระบบ</h2>
+      <div class="sub">สำหรับเจ้าหน้าที่ รพ.สต. อสม. และผู้ดูแลระบบ</div>
+      <div id="loginAlert"></div>
+      <div class="field" style="margin-bottom:14px"><label for="lgUser">ชื่อผู้ใช้</label><input class="input" id="lgUser" name="username" autocomplete="username" required maxlength="64" autocapitalize="none"></div>
+      <div class="field" style="margin-bottom:18px"><label for="lgPass">รหัสผ่าน</label><div class="pw-wrap"><input class="input" id="lgPass" name="password" type="password" autocomplete="current-password" required maxlength="128" style="padding-right:48px"><button type="button" class="btn btn-ghost btn-icon btn-sm" data-act="toggle-pw" data-target="lgPass" aria-label="แสดงรหัสผ่าน"><i data-lucide="eye"></i></button></div></div>
+      <button class="btn btn-primary btn-block" type="submit" id="lgBtn" style="min-height:48px"><i data-lucide="log-in"></i> เข้าสู่ระบบ</button>
+      <div class="api-status" id="apiStatus"><span class="dot wait"></span><span>กำลังตรวจสอบการเชื่อมต่อ API...</span></div>
+      <div id="apiConfig" hidden style="margin-top:12px">
+        <div class="field"><label for="cfgUrl">GAS Web App URL (ตั้งค่าเฉพาะเครื่องนี้)</label><input class="input" id="cfgUrl" placeholder="https://script.google.com/macros/s/.../exec"></div>
+        <button type="button" class="btn btn-outline btn-sm" data-act="save-url" style="margin-top:8px"><i data-lucide="save"></i> บันทึก URL</button>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" data-act="show-config" style="margin-top:8px"><i data-lucide="settings"></i> ตั้งค่าการเชื่อมต่อ</button>
+    </form>
+  </div>
+</section>
+
+<!-- ======================= APP SHELL ======================= -->
+<div id="app" hidden>
+  <aside class="sidebar" id="sidebar" aria-label="เมนูหลัก">
+    <div class="sb-head"><div class="brand-logo"><i data-lucide="heart-pulse"></i></div><div class="sb-title">BN SMART ศสมช.<small id="sbOrg">รพ.สต.บึงเนียม</small></div></div>
+    <nav class="sb-nav" id="sbNav"></nav>
+    <div class="sb-foot" id="sbFoot">v1.0.0</div>
+  </aside>
+  <div class="overlay" id="overlay" hidden data-act="close-sidebar"></div>
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn only-mobile-nav" data-act="open-sidebar" aria-label="เปิดเมนู"><i data-lucide="menu"></i></button>
+      <div class="crumb" id="crumb"></div>
+      <div class="tb-actions">
+        <button class="icon-btn" data-act="refresh-view" aria-label="รีเฟรช" title="รีเฟรชข้อมูล"><i data-lucide="refresh-cw"></i></button>
+        <button class="icon-btn" data-act="toggle-noti" aria-label="การแจ้งเตือน" title="การแจ้งเตือน"><i data-lucide="bell"></i><span class="badge-count" id="notiCount" hidden>0</span></button>
+        <button class="profile-btn" data-act="toggle-profile" aria-label="โปรไฟล์ผู้ใช้"><span class="avatar" id="pAvatar">A</span><span class="pinfo"><b id="pName">-</b><small id="pRole">-</small></span></button>
+      </div>
+    </header>
+    <div class="dropdown" id="notiPanel" hidden>
+      <div class="dd-head"><b>การแจ้งเตือน</b><span style="display:flex;gap:4px"><button class="btn btn-ghost btn-sm" data-act="noti-new" id="notiNewBtn" hidden><i data-lucide="megaphone"></i> ส่งประกาศ</button><button class="btn btn-ghost btn-sm" data-act="noti-read-all"><i data-lucide="check-check"></i> อ่านทั้งหมด</button></span></div>
+      <div class="dd-body" id="notiList"></div>
+    </div>
+    <div class="dropdown" id="profilePanel" hidden style="width:300px">
+      <div class="dd-head" style="flex-direction:column;align-items:flex-start"><b id="ppName">-</b><small class="muted" id="ppMeta">-</small></div>
+      <div class="dd-body">
+        <button class="dd-item" data-act="change-password"><i data-lucide="key-round"></i><div>เปลี่ยนรหัสผ่าน</div></button>
+        <button class="dd-item" data-act="logout"><i data-lucide="log-out"></i><div>ออกจากระบบ</div></button>
+      </div>
+    </div>
+    <main class="content" id="view" tabindex="-1"></main>
+  </div>
+  <nav class="bottom-nav" id="bottomNav" aria-label="เมนูด่วน"></nav>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toasts" role="status" aria-live="polite"></div>
+<div id="printArea"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+ *  CONFIG — ใส่ URL ของ Google Apps Script Web App หลัง Deploy
+ * =================================================================== */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwKQqB5BPNsS1aTkd8cY3yvCVc_KFwzAbsGI-hgQlzYMNu8bTvJXR-7ZiAYDxWzQax7eg/exec';
+
+const CFG = { timeout: 30000, importTimeout: 300000, notiPollMs: 120000, version: '1.0.0' };
+const TH_MONTHS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const TH_MONTHS_FULL = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const PALETTE = ['#2a78d6','#eb6834','#1baf7a','#eda100','#e87ba4','#008300','#6250d6','#e34948'];
+const STATUS_COLOR = { 'ปกติ':'#0ca30c','เสี่ยง':'#fab219','สงสัยป่วย':'#ec835a','เร่งด่วน':'#d03b3b' };
+
+/* ---------- state (in memory only; no health data in browser storage) ---------- */
+const App = { token: null, user: null, boot: null, view: null, dashFilters: null, mod: {}, charts: {}, notiTimer: null, pending: 0, dashStale: true, imp: null, lastData: {} };
+
+/* =====================================================================
+ *  UTILITIES
+ * =================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = v => String(v === null || v === undefined ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const icons = () => { if (window.lucide) try { lucide.createIcons(); } catch (e) {} };
+const fmtNum = n => (n === null || n === undefined || n === '') ? '-' : Number(n).toLocaleString('th-TH');
+const pad2 = n => String(n).padStart(2, '0');
+function fmtDate(s) { if (!s) return '-'; const m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? `${Number(m[3])}/${Number(m[2])}/${Number(m[1]) + 543}` : esc(s); }
+function fmtDT(s) { if (!s) return '-'; const d = new Date(s); return isNaN(d) ? esc(s) : d.toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }); }
+function currentFY() { const d = new Date(); return (d.getMonth() + 1 >= 10 ? d.getFullYear() + 1 : d.getFullYear()) + 543; }
+function todayISO() { const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; }
+function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+function safeLS(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
+function safeSS(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { return null; } }
+function apiUrl() { return (GAS_URL || safeLS('bn_gas_url') || '').trim(); }
+function validCID(c) { if (!/^\d{13}$/.test(c)) return false; let s = 0; for (let i = 0; i < 12; i++) s += +c[i] * (13 - i); return ((11 - (s % 11)) % 10) === +c[12]; }
+function ymd(y, m, d) { y = +y; m = +m; d = +d; if (y > 2400) y -= 543; if (y < 1900 || y > 2100) return null; const dt = new Date(Date.UTC(y, m - 1, d)); if (dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) return null; return `${y}-${pad2(m)}-${pad2(d)}`; }
+const TH_MONTH_IDX = (() => { const o = {}; TH_MONTHS.forEach((m, i) => o[m.replace(/\./g, '')] = i + 1); TH_MONTHS_FULL.forEach((m, i) => o[m] = i + 1); return o; })();
+/** Mirrors backend parseDateValue_ (dd/mm/yyyy, พ.ศ./ค.ศ., Excel serial, yyyy-mm-dd, "1 ม.ค. 2510") */
+function parseDateC(v) {
+  if (v === '' || v === null || v === undefined) return '';
+  const s = String(v).trim();
+  if (typeof v === 'number' || /^\d{4,5}(\.\d+)?$/.test(s)) { const n = +s; if (n > 60 && n < 80000) { const d = new Date(Math.round((n - 25569) * 86400000)); return ymd(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()); } return null; }
+  let m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})(?:[ T].*)?$/); if (m) return ymd(m[1], m[2], m[3]);
+  m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})(?:\s.*)?$/); if (m) return ymd(m[3], m[2], m[1]);
+  m = s.match(/^(\d{1,2})\s*([ก-๙.]+)\s*(\d{4})$/); if (m) { const mo = TH_MONTH_IDX[m[2].replace(/\./g, '')]; if (mo) return ymd(m[3], mo, m[1]); }
+  return null;
+}
+function statusClass(v) {
+  const s = String(v || '');
+  if (/^(ปกติ|ควบคุมได้|ติดสังคม|สมวัย|ให้บริการแล้ว|เยี่ยมแล้ว|ติดตามแล้ว|เสร็จสิ้น|รักษาเสร็จ|รับแล้ว|ใช้งานได้|เปิดบริการ|ปฏิบัติงาน|ปิดเหตุการณ์|ดีเยี่ยม|ดี$|ไม่ต้องติดตาม|ไม่พบ|ต่ำ|active|ลบ \(ปกติ\)|ไม่มี\/น้อยมาก|ไม่มีแนวโน้ม|มีชีวิต|ดูแลต่อเนื่อง)/.test(s)) return 'st-good';
+  if (/(เร่งด่วน|ฉุกเฉิน|ควบคุมไม่ได้|ติดเตียง|ล่าช้า$|^ล่าช้า|รุนแรง|พบ\/ผลบวก|สูง|ชำรุด|^ขาดสารอาหาร|เสียชีวิต|disabled|ปฏิเสธ)/.test(s)) return 'st-critical';
+  if (/(สงสัย|ติดบ้าน|ต้องติดตาม|กลุ่มเสี่ยง|ปานกลาง|บวก|อ้วน|หกล้ม|รอซ่อม|ส่งต่อ|ปรับปรุง)/.test(s)) return 'st-serious';
+  if (/(เสี่ยง|รอ|วางแผน|มอบหมาย|กำลัง|น้อย|เกิน|ยังไม่|พอใช้|เปิด|ไม่มีข้อมูล)/.test(s)) return 'st-warn';
+  return '';
+}
+const statusBadge = v => v === '' || v === null || v === undefined ? '<span class="muted">-</span>' : `<span class="status ${statusClass(v)}">${esc(v)}</span>`;
+function can(cap) { return !!(App.boot && App.boot.permissions.caps[cap]); }
+function readable(sheet) { return !!(App.boot && App.boot.schema[sheet]); }
+function sc(sheet) { return App.boot.schema[sheet]; }
+function villageName(no) { const v = (App.boot.villages || []).find(x => x.no === +no); return v ? v.name : 'หมู่ที่ ' + no; }
+function volunteerName(id) { const v = (App.boot.volunteers || []).find(x => x.id === id); return v ? v.name : id; }
+function centerName(id) { const v = (App.boot.centers || []).find(x => x.id === id); return v ? v.name : id; }
+function stateBox(type, title, msg, retryAct) {
+  const ic = { empty: 'inbox', error: 'alert-triangle', locked: 'lock', loading: '' }[type];
+  if (type === 'loading') return `<div class="state"><div class="spinner"></div>${esc(title || 'กำลังโหลดข้อมูล...')}</div>`;
+  return `<div class="state ${type === 'error' ? 'error' : ''}"><div class="s-icon"><i data-lucide="${ic}"></i></div><h3>${esc(title)}</h3><div>${esc(msg || '')}</div>${retryAct ? `<button class="btn btn-outline btn-sm" style="margin-top:14px" data-act="${retryAct}"><i data-lucide="rotate-ccw"></i> ลองใหม่</button>` : ''}</div>`;
+}
+
+/* ---------- toast & loading ---------- */
+function toast(msg, type = 'ok', ms = 4200) {
+  const ic = { ok: 'check-circle-2', error: 'x-circle', warn: 'alert-triangle', info: 'info' }[type] || 'info';
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = `<span class="t-icon"><i data-lucide="${ic}"></i></span><div style="flex:1">${esc(msg)}</div>`;
+  $('#toasts').appendChild(el); icons();
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 320); }, ms);
+}
+function loading(delta) {
+  App.pending = Math.max(0, App.pending + delta);
+  const bar = $('#topprogress');
+  if (App.pending > 0) { bar.style.opacity = '1'; bar.style.width = '70%'; }
+  else { bar.style.width = '100%'; setTimeout(() => { if (!App.pending) { bar.style.opacity = '0'; bar.style.width = '0'; } }, 250); }
+}
+
+/* =====================================================================
+ *  API CLIENT  (POST text/plain → no CORS preflight; token in body, never in URL)
+ * =================================================================== */
+class ApiError extends Error { constructor(code, message, details) { super(message); this.code = code; this.details = details; } }
+async function api(action, payload = {}, opt = {}) {
+  const url = apiUrl();
+  if (!url) throw new ApiError('NO_URL', 'ยังไม่ได้ตั้งค่า GAS_URL');
+  if (!navigator.onLine) throw new ApiError('OFFLINE', 'ไม่มีการเชื่อมต่ออินเทอร์เน็ต');
+  const ctrl = new AbortController();
+  const tm = setTimeout(() => ctrl.abort(), opt.timeout || CFG.timeout);
+  if (!opt.silent) loading(1);
+  try {
+    const res = await fetch(url, { method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, token: App.token, payload }), signal: ctrl.signal });
+    if (!res.ok) throw new ApiError('HTTP_' + res.status, 'เซิร์ฟเวอร์ตอบกลับผิดพลาด (HTTP ' + res.status + ')');
+    const text = await res.text();
+    let j;
+    try { j = JSON.parse(text); } catch (e) { throw new ApiError('BAD_RESPONSE', 'ข้อมูลจากเซิร์ฟเวอร์ไม่ใช่ JSON — ตรวจสอบ GAS_URL และการ Deploy (Who has access: Anyone)'); }
+    if (!j.success) {
+      const err = new ApiError(j.errorCode, j.message, j.details);
+      if ((j.errorCode === 'SESSION_EXPIRED' || j.errorCode === 'UNAUTHORIZED') && !opt.noAuthRedirect) sessionExpired(j.message);
+      if (j.errorCode === 'MUST_CHANGE_PASSWORD') openChangePassword(true);
+      throw err;
+    }
+    return j.data;
+  } catch (e) {
+    if (e instanceof ApiError) throw e;
+    if (e.name === 'AbortError') throw new ApiError('TIMEOUT', 'หมดเวลาการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+    if (opt.retry) { await new Promise(r => setTimeout(r, 1500)); return api(action, payload, Object.assign({}, opt, { retry: false })); }
+    throw new ApiError('NETWORK', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ ตรวจสอบอินเทอร์เน็ตหรือ GAS_URL');
+  } finally { clearTimeout(tm); if (!opt.silent) loading(-1); }
+}
+
+/* =====================================================================
+ *  AUTH
+ * =================================================================== */
+async function checkApi() {
+  const box = $('#apiStatus');
+  const url = apiUrl();
+  if (!url) {
+    box.innerHTML = '<span class="dot bad"></span><span>ยังไม่ได้กำหนด GAS_URL — ใส่ URL ในไฟล์ index.html หรือกด "ตั้งค่าการเชื่อมต่อ"</span>';
+    $('#apiConfig').hidden = false; $('#lgBtn').disabled = true; return;
+  }
+  $('#lgBtn').disabled = false;
+  try {
+    const d = await api('ping', {}, { silent: true, noAuthRedirect: true, timeout: 20000, retry: true });
+    box.innerHTML = d.setup ? `<span class="dot ok"></span><span>เชื่อมต่อ API สำเร็จ · ${esc(d.name)} v${esc(d.version)}</span>` : '<span class="dot wait"></span><span>เชื่อมต่อได้ แต่ยังไม่ได้ติดตั้งฐานข้อมูล — เรียก SetupSheet() ใน Apps Script</span>';
+  } catch (e) {
+    box.innerHTML = `<span class="dot bad"></span><span>เชื่อมต่อ API ไม่สำเร็จ: ${esc(e.message)}</span>`;
+  }
+}
+async function doLogin(ev) {
+  ev.preventDefault();
+  const u = $('#lgUser').value.trim(), p = $('#lgPass').value;
+  const al = $('#loginAlert');
+  al.innerHTML = '';
+  if (!u || !p) { al.innerHTML = '<div class="alert alert-error"><i data-lucide="alert-circle"></i>กรุณากรอกชื่อผู้ใช้และรหัสผ่าน</div>'; icons(); return; }
+  const btn = $('#lgBtn'); btn.disabled = true; btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;margin:0;border-width:2px"></span> กำลังตรวจสอบ...';
+  try {
+    const d = await api('login', { username: u, password: p }, { noAuthRedirect: true });
+    App.token = d.token; App.user = d.user; safeSS('bn_token', d.token);
+    $('#lgPass').value = '';
+    if (d.mustChangePassword) { openChangePassword(true); }
+    else await loadBoot();
+  } catch (e) {
+    al.innerHTML = `<div class="alert alert-error"><i data-lucide="alert-circle"></i><div>${esc(e.message)}</div></div>`;
+  } finally { btn.disabled = false; btn.innerHTML = '<i data-lucide="log-in"></i> เข้าสู่ระบบ'; icons(); }
+}
+async function loadBoot() {
+  const d = await api('getBootstrap', {}, { retry: true });
+  if (d.mustChangePassword) { App.user = d.user; openChangePassword(true); return; }
+  App.boot = d; App.user = d.user;
+  if (!App.dashFilters) App.dashFilters = defaultDashFilters();
+  showApp();
+}
+function showApp() {
+  $('#loginScreen').hidden = true; $('#app').hidden = false;
+  const u = App.user;
+  $('#pAvatar').textContent = (u.displayName || u.username || '?').trim().charAt(0).toUpperCase();
+  $('#pName').textContent = u.displayName; $('#pRole').textContent = u.roleLabel;
+  $('#ppName').textContent = u.displayName;
+  $('#ppMeta').textContent = `${u.roleLabel} · ${u.role === 'VOLUNTEER' ? 'หมู่ ' + u.villages.join(', ') : 'ทุกหมู่บ้าน'}${u.mentalAccess ? ' · สิทธิ์สุขภาพจิต' : ''}`;
+  $('#sbOrg').textContent = App.boot.settings.orgName || 'รพ.สต.บึงเนียม';
+  $('#sbFoot').innerHTML = `v${esc(App.boot.version)} · นำเข้าล่าสุด: <span id="sbLastImport">${App.boot.settings.lastImportAt ? fmtDT(App.boot.settings.lastImportAt) : '-'}</span>`;
+  renderNav();
+  $('#notiNewBtn').hidden = !can('notify');
+  loadNotifications();
+  clearInterval(App.notiTimer);
+  App.notiTimer = setInterval(() => loadNotifications(true), CFG.notiPollMs);
+  route();
+}
+async function logout(silentMsg) {
+  try { if (App.token) await api('logout', {}, { noAuthRedirect: true, timeout: 8000 }); } catch (e) {}
+  resetSession();
+  showLogin(silentMsg || 'ออกจากระบบเรียบร้อย', 'ok');
+}
+function resetSession() {
+  App.token = null; App.user = null; App.boot = null; App.mod = {}; App.dashFilters = null; App.imp = null; App.lastData = {};
+  safeSS('bn_token', null);
+  clearInterval(App.notiTimer);
+  Object.values(App.charts).forEach(c => { try { c.destroy(); } catch (e) {} }); App.charts = {};
+  closeModal(); $('#view').innerHTML = '';
+}
+function showLogin(msg, type) {
+  $('#app').hidden = true; $('#loginScreen').hidden = false;
+  if (msg) { $('#loginAlert').innerHTML = `<div class="alert ${type === 'ok' ? 'alert-ok' : 'alert-warn'}"><i data-lucide="${type === 'ok' ? 'check-circle-2' : 'clock'}"></i><div>${esc(msg)}</div></div>`; icons(); }
+  checkApi();
+}
+let expiredShown = false;
+function sessionExpired(msg) {
+  if (expiredShown) return; expiredShown = true;
+  resetSession();
+  showLogin(msg || 'Session หมดอายุ กรุณาเข้าสู่ระบบใหม่', 'warn');
+  setTimeout(() => expiredShown = false, 1500);
+}
+function pwPolicy(pw, username) {
+  if (pw.length < 8) return 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร';
+  if (!/[A-Za-z]/.test(pw) || !/\d/.test(pw)) return 'ต้องมีทั้งตัวอักษรภาษาอังกฤษและตัวเลข';
+  if (username && pw.toLowerCase().includes(String(username).toLowerCase())) return 'รหัสผ่านต้องไม่มีชื่อผู้ใช้';
+  return '';
+}
+function openChangePassword(forced) {
+  if (forced && $('#modalRoot [data-modal="chpw"]')) return;
+  openModal({
+    id: 'chpw', size: 'sm', closable: !forced, title: '<i data-lucide="key-round"></i> ' + (forced ? 'ตั้งรหัสผ่านใหม่ก่อนใช้งาน' : 'เปลี่ยนรหัสผ่าน'),
+    body: `${forced ? '<div class="alert alert-warn"><i data-lucide="shield-alert"></i><div>บัญชีนี้ใช้รหัสผ่านเริ่มต้น/ชั่วคราว ระบบบังคับให้เปลี่ยนก่อนเข้าถึงข้อมูลสุขภาพ</div></div>' : ''}
+      <div id="cpErr"></div>
+      <div class="field mb"><label>รหัสผ่านเดิม</label><input class="input" type="password" id="cpOld" autocomplete="current-password"></div>
+      <div class="field mb"><label>รหัสผ่านใหม่</label><input class="input" type="password" id="cpNew" autocomplete="new-password"><span class="hint">อย่างน้อย 8 ตัว มีตัวอักษรภาษาอังกฤษและตัวเลข ไม่มีชื่อผู้ใช้</span></div>
+      <div class="field"><label>ยืนยันรหัสผ่านใหม่</label><input class="input" type="password" id="cpNew2" autocomplete="new-password"></div>`,
+    foot: `${forced ? '<button class="btn btn-ghost" data-act="logout">ออกจากระบบ</button>' : '<button class="btn btn-ghost" data-act="close-modal">ยกเลิก</button>'}<button class="btn btn-primary" data-act="submit-chpw"><i data-lucide="save"></i> บันทึก</button>`
+  });
+}
+async function submitChangePassword() {
+  const o = $('#cpOld').value, n = $('#cpNew').value, n2 = $('#cpNew2').value, box = $('#cpErr');
+  const pol = pwPolicy(n, App.user && App.user.username);
+  const show = m => { box.innerHTML = `<div class="alert alert-error"><i data-lucide="alert-circle"></i><div>${esc(m)}</div></div>`; icons(); };
+  if (!o) return show('กรุณากรอกรหัสผ่านเดิม');
+  if (pol) return show(pol);
+  if (n !== n2) return show('ยืนยันรหัสผ่านไม่ตรงกัน');
+  try {
+    await api('changePassword', { oldPassword: o, newPassword: n });
+    closeModal(); toast('เปลี่ยนรหัสผ่านสำเร็จ');
+    if (!App.boot) await loadBoot();
+  } catch (e) { show(e.message); }
+}
+
+/* =====================================================================
+ *  MODAL
+ * =================================================================== */
+function openModal({ id = 'm', title, body, foot, size = '', closable = true }) {
+  closeModal();
+  $('#modalRoot').innerHTML = `<div class="modal-back" data-modal="${id}" ${closable ? 'data-closable="1"' : ''}><div class="modal ${size}" role="dialog" aria-modal="true"><div class="modal-head"><h3>${title}</h3>${closable ? '<button class="btn btn-ghost btn-icon" data-act="close-modal" aria-label="ปิด"><i data-lucide="x"></i></button>' : ''}</div><div class="modal-body">${body}</div>${foot ? `<div class="modal-foot">${foot}</div>` : ''}</div></div>`;
+  document.body.style.overflow = 'hidden';
+  icons();
+  const first = $('#modalRoot input:not([type=hidden]),#modalRoot select,#modalRoot textarea');
+  if (first && window.innerWidth > 760) setTimeout(() => first.focus(), 50);
+}
+function closeModal() { $('#modalRoot').innerHTML = ''; document.body.style.overflow = ''; }
+function confirmBox(title, msg, okText = 'ยืนยัน', danger = false) {
+  return new Promise(resolve => {
+    openModal({ id: 'confirm', size: 'sm', title, body: `<div>${msg}</div>`, foot: `<button class="btn btn-ghost" id="cfNo">ยกเลิก</button><button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" id="cfYes">${okText}</button>` });
+    $('#cfNo').onclick = () => { closeModal(); resolve(false); };
+    $('#cfYes').onclick = () => { closeModal(); resolve(true); };
+  });
+}
+
+/* =====================================================================
+ *  NAVIGATION
+ * =================================================================== */
+const VIEWS = {
+  dashboard: { title: 'ภาพรวมตำบล', sub: 'Dashboard', icon: 'layout-dashboard', group: 'ภาพรวม', cap: 'dashboard' },
+  registration: { title: 'Smart Registration', sub: 'ทะเบียนประชาชน/ครัวเรือน', icon: 'contact', group: 'บริการสุขภาพ', sheets: ['POPULATION', 'HOUSEHOLDS'] },
+  service: { title: 'Smart Service', sub: 'บริการประชาชน', icon: 'stethoscope', group: 'บริการสุขภาพ', sheets: ['SERVICE_RECORDS'] },
+  screening: { title: 'Smart Screening', sub: 'คัดกรองสุขภาพ', icon: 'activity', group: 'บริการสุขภาพ', sheets: ['SCREENING'] },
+  ncd: { title: 'Smart NCD', sub: 'ทะเบียนโรคเรื้อรัง DM/HT', icon: 'heart-pulse', group: 'บริการสุขภาพ', sheets: ['NCD_REGISTER'] },
+  child: { title: 'Smart Child Health', sub: 'เด็ก 0–5 ปี', icon: 'baby', group: 'บริการสุขภาพ', sheets: ['CHILD_HEALTH'] },
+  elderly: { title: 'Smart Elderly Health', sub: 'ผู้สูงอายุ', icon: 'person-standing', group: 'บริการสุขภาพ', sheets: ['ELDERLY'] },
+  ltc: { title: 'Smart LTC', sub: 'ดูแลระยะยาว', icon: 'bed', group: 'บริการสุขภาพ', sheets: ['LTC_REGISTER'] },
+  mental: { title: 'Smart Mental Health', sub: '2Q / 9Q / 8Q (จำกัดสิทธิ์)', icon: 'brain', group: 'บริการสุขภาพ', sheets: ['MENTAL_HEALTH'] },
+  homevisit: { title: 'Smart Home Visit', sub: 'เยี่ยมบ้าน', icon: 'door-open', group: 'บริการสุขภาพ', sheets: ['HOME_VISITS'] },
+  referral: { title: 'Smart Referral', sub: 'ส่งต่อผู้ป่วย', icon: 'send', group: 'บริการสุขภาพ', sheets: ['REFERRALS'] },
+  surveillance: { title: 'Smart Surveillance', sub: 'เฝ้าระวังโรค', icon: 'shield-alert', group: 'บริการสุขภาพ', sheets: ['SURVEILLANCE'] },
+  volunteer: { title: 'Smart Volunteer', sub: 'ทะเบียน/ภารกิจ อสม.', icon: 'users', group: 'เครือข่ายสุขภาพ', sheets: ['VOLUNTEERS', 'VOLUNTEER_TASKS'] },
+  center: { title: 'Smart Center', sub: 'บริหาร ศสมช.', icon: 'building-2', group: 'เครือข่ายสุขภาพ', sheets: ['HEALTH_CENTERS', 'EQUIPMENT', 'HEALTH_ACTIVITIES', 'VILLAGES'] },
+  ai: { title: 'Smart AI & Reports', sub: 'วิเคราะห์อัตโนมัติ', icon: 'sparkles', group: 'วิเคราะห์และรายงาน', cap: 'ai' },
+  reports: { title: 'รายงานและส่งออก', sub: 'Reports', icon: 'file-bar-chart', group: 'วิเคราะห์และรายงาน', cap: 'reports' },
+  quality: { title: 'คุณภาพข้อมูล', sub: 'Data Quality', icon: 'badge-check', group: 'วิเคราะห์และรายงาน', cap: 'quality' },
+  import: { title: 'Excel Import Center', sub: 'นำเข้าข้อมูล', icon: 'file-spreadsheet', group: 'ผู้ดูแลระบบ', cap: 'import' },
+  users: { title: 'ผู้ใช้งานและสิทธิ์', sub: 'Users & RBAC', icon: 'user-cog', group: 'ผู้ดูแลระบบ', cap: 'users' },
+  settings: { title: 'ตั้งค่าระบบ', sub: 'Settings', icon: 'settings', group: 'ผู้ดูแลระบบ', cap: 'settings' },
+  audit: { title: 'Audit Log', sub: 'ประวัติการเข้าถึง', icon: 'scroll-text', group: 'ผู้ดูแลระบบ', cap: 'audit' }
+};
+const SHEET_VIEW = { POPULATION: 'registration', HOUSEHOLDS: 'registration', SERVICE_RECORDS: 'service', SCREENING: 'screening', NCD_REGISTER: 'ncd', CHILD_HEALTH: 'child', ELDERLY: 'elderly', LTC_REGISTER: 'ltc', MENTAL_HEALTH: 'mental', HOME_VISITS: 'homevisit', REFERRALS: 'referral', SURVEILLANCE: 'surveillance', VOLUNTEERS: 'volunteer', VOLUNTEER_TASKS: 'volunteer', HEALTH_CENTERS: 'center', EQUIPMENT: 'center', HEALTH_ACTIVITIES: 'center', VILLAGES: 'center', IMPORT_LOG: 'import' };
+function canView(key) { const v = VIEWS[key]; if (!v || !App.boot) return false; if (v.cap) return can(v.cap); return v.sheets.some(readable); }
+function renderNav() {
+  let html = '', group = '';
+  Object.keys(VIEWS).forEach(k => {
+    if (!canView(k)) return;
+    const v = VIEWS[k];
+    if (v.group !== group) { group = v.group; html += `<div class="sb-group">${esc(group)}</div>`; }
+    html += `<a class="sb-link" href="#/${k}" data-view="${k}"><i data-lucide="${v.icon}"></i><span>${esc(v.title)}<small>${esc(v.sub)}</small></span></a>`;
+  });
+  $('#sbNav').innerHTML = html;
+  const prefer = ['dashboard', 'registration', 'screening', 'homevisit', 'service', 'reports', 'ai'].filter(canView).slice(0, 4);
+  const short = { dashboard: 'หน้าหลัก', registration: 'ทะเบียน', screening: 'คัดกรอง', homevisit: 'เยี่ยมบ้าน', service: 'บริการ', reports: 'รายงาน', ai: 'AI' };
+  $('#bottomNav').innerHTML = prefer.map(k => `<button class="bn-item" data-act="nav" data-view="${k}"><i data-lucide="${VIEWS[k].icon}"></i>${short[k]}</button>`).join('') + '<button class="bn-item" data-act="open-sidebar"><i data-lucide="menu"></i>เมนู</button>';
+  icons();
+}
+function route() {
+  if (!App.boot) return;
+  const parts = (location.hash || '').replace(/^#\/?/, '').split('/');
+  let key = parts[0];
+  if (!canView(key)) key = canView('dashboard') ? 'dashboard' : Object.keys(VIEWS).find(canView);
+  if (!key) { $('#view').innerHTML = stateBox('locked', 'ไม่มีเมนูที่เข้าถึงได้', 'กรุณาติดต่อผู้ดูแลระบบ'); icons(); return; }
+  App.view = key;
+  $$('.sb-link').forEach(a => a.classList.toggle('active', a.dataset.view === key));
+  $$('.bn-item').forEach(a => a.classList.toggle('active', a.dataset.view === key));
+  const v = VIEWS[key];
+  $('#crumb').innerHTML = `<i data-lucide="home"></i><span>BN SMART</span><i data-lucide="chevron-right"></i><span>${esc(v.group)}</span><i data-lucide="chevron-right"></i><b>${esc(v.title)}</b>`;
+  document.body.classList.remove('sb-open'); $('#overlay').hidden = true;
+  Object.values(App.charts).forEach(c => { try { c.destroy(); } catch (e) {} }); App.charts = {};
+  const r = { dashboard: renderDashboard, ai: renderAI, reports: renderReports, quality: renderQuality, import: renderImport, users: renderUsers, settings: renderSettings, audit: renderAudit }[key];
+  if (r) r(); else renderModule(key);
+  window.scrollTo(0, 0);
+  icons();
+}
+function navigate(key) { if (location.hash === '#/' + key) route(); else location.hash = '#/' + key; }
+
+/* =====================================================================
+ *  NOTIFICATIONS
+ * =================================================================== */
+async function loadNotifications(silent) {
+  try {
+    const d = await api('getNotifications', {}, { silent: true });
+    App.lastData.noti = d;
+    const c = $('#notiCount'); c.hidden = !d.unread; c.textContent = d.unread > 99 ? '99+' : d.unread;
+    if (!$('#notiPanel').hidden) renderNotiList();
+  } catch (e) { if (!silent && e.code !== 'SESSION_EXPIRED') console.warn(e.message); }
+}
+function renderNotiList() {
+  const d = App.lastData.noti || { rows: [] };
+  const ic = { critical: 'alert-octagon', warning: 'alert-triangle', info: 'info' };
+  const col = { critical: 'var(--critical)', warning: 'var(--amber-600)', info: 'var(--blue-600)' };
+  $('#notiList').innerHTML = d.rows.length ? d.rows.map(n => `<button class="dd-item ${n.read ? '' : 'unread'}" data-act="open-noti" data-id="${esc(n.id)}" data-sheet="${esc(n.refSheet)}"><span style="color:${col[n.level] || col.info}"><i data-lucide="${ic[n.level] || 'info'}"></i></span><div><b style="font-weight:500">${esc(n.title)}</b><small>${esc(n.message)}</small><small>${fmtDT(n.time)}</small></div></button>`).join('') : stateBox('empty', 'ไม่มีการแจ้งเตือน', '');
+  icons();
+}
+
+/* =====================================================================
+ *  DASHBOARD
+ * =================================================================== */
+function defaultDashFilters() { return { fiscalYear: currentFY(), year: '', month: '', villages: [], centerId: '', serviceType: '', ageGroup: '', sex: '', patientType: '', followStatus: '', volunteerId: '' }; }
+const PATIENT_TYPES = [['', 'ทั้งหมด'], ['NCD', 'ผู้ป่วย NCD (DM/HT)'], ['DM', 'DM อย่างเดียว'], ['HT', 'HT อย่างเดียว'], ['DMHT', 'DM + HT'], ['ELDERLY', 'ผู้สูงอายุ 60+'], ['CHILD', 'เด็ก 0–5 ปี'], ['BEDRIDDEN', 'ติดบ้าน/ติดเตียง'], ['LTC', 'ผู้ป่วย LTC'], ['RISK', 'กลุ่มเสี่ยง (ผลคัดกรอง)']];
+function yearOptions(sel, fiscal) { const cy = fiscal ? currentFY() : new Date().getFullYear() + 543; let h = `<option value="">ทั้งหมด</option>`; for (let y = cy; y >= cy - 6; y--) h += `<option value="${y}" ${+sel === y ? 'selected' : ''}>${fiscal ? 'ปีงบ ' : ''}${y}</option>`; return h; }
+function monthOptions(sel) { return `<option value="">ทุกเดือน</option>` + TH_MONTHS_FULL.map((m, i) => `<option value="${i + 1}" ${+sel === i + 1 ? 'selected' : ''}>${m}</option>`).join(''); }
+function opts(list, sel, allLabel = 'ทั้งหมด') { return `<option value="">${allLabel}</option>` + list.map(o => { const [v, l] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(v)}" ${String(sel) === String(v) ? 'selected' : ''}>${esc(l)}</option>`; }).join(''); }
+function dashFilterText(f) {
+  const t = [];
+  if (f.fiscalYear) t.push('ปีงบประมาณ ' + f.fiscalYear);
+  if (f.year) t.push('ปี ' + f.year);
+  if (f.month) t.push('เดือน' + TH_MONTHS_FULL[f.month - 1]);
+  t.push(f.villages.length ? 'หมู่ ' + f.villages.slice().sort((a, b) => a - b).join(', ') : (App.user.role === 'VOLUNTEER' ? 'หมู่ที่รับผิดชอบ' : 'ทุกหมู่บ้าน'));
+  if (f.centerId) t.push(centerName(f.centerId));
+  if (f.serviceType) t.push(f.serviceType);
+  if (f.ageGroup) t.push('อายุ ' + f.ageGroup + ' ปี');
+  if (f.sex) t.push('เพศ' + f.sex);
+  if (f.patientType) t.push((PATIENT_TYPES.find(p => p[0] === f.patientType) || [])[1]);
+  if (f.followStatus) t.push(f.followStatus);
+  if (f.volunteerId) t.push('อสม. ' + volunteerName(f.volunteerId));
+  return t;
+}
+function renderDashboard() {
+  const f = App.dashFilters, b = App.boot;
+  const vchips = b.villages.length > 1 ? `<button class="chip ${f.villages.length ? '' : 'active'}" data-act="dash-v" data-v="all">ทั้งหมด</button>` + b.villages.map(v => `<button class="chip ${f.villages.includes(v.no) ? 'active' : ''}" data-act="dash-v" data-v="${v.no}" title="${esc(v.name)}">หมู่ ${v.no}</button>`).join('') : `<span class="tag">หมู่ ${b.villages.map(v => v.no).join(', ')}</span>`;
+  const activeCount = Object.keys(f).filter(k => k !== 'villages' && f[k]).length + (f.villages.length ? 1 : 0);
+  $('#view').innerHTML = `
+  <div class="page-head">
+    <div><h1><span class="ph-icon"><i data-lucide="layout-dashboard"></i></span>ภาพรวมสุขภาพตำบล${esc(b.settings.tambon || '')}</h1><p id="dashMeta">ข้อมูลคำนวณจากฐานข้อมูลจริง · นำเข้าล่าสุด ${b.settings.lastImportAt ? fmtDT(b.settings.lastImportAt) : '-'}</p></div>
+    <div class="head-actions no-print">
+      <button class="btn btn-outline" data-act="dash-refresh"><i data-lucide="refresh-cw"></i> รีเฟรช</button>
+      <button class="btn btn-outline" data-act="dash-export"><i data-lucide="download"></i> Excel</button>
+      <button class="btn btn-outline" data-act="print"><i data-lucide="printer"></i> พิมพ์</button>
+    </div>
+  </div>
+  <div class="card filter-card no-print ${window.innerWidth <= 760 && !App.dashFilterOpen ? 'collapsed' : ''}" id="dashFilterCard">
+    <button class="btn btn-ghost btn-block filter-toggle" data-act="toggle-filter" style="justify-content:space-between"><span style="display:flex;gap:8px;align-items:center"><i data-lucide="filter"></i> ตัวกรอง ${activeCount ? `(${activeCount})` : ''}</span><i data-lucide="chevron-down"></i></button>
+    <div class="filter-body">
+      <div class="filter-grid">
+        <div class="field"><label>ปีงบประมาณ</label><select class="input" data-df="fiscalYear">${yearOptions(f.fiscalYear, true)}</select></div>
+        <div class="field"><label>ปีปฏิทิน (พ.ศ.)</label><select class="input" data-df="year">${yearOptions(f.year, false)}</select></div>
+        <div class="field"><label>เดือน</label><select class="input" data-df="month">${monthOptions(f.month)}</select></div>
+        <div class="field"><label>ศสมช.</label><select class="input" data-df="centerId">${opts(b.centers.map(c => [c.id, c.name]), f.centerId)}</select></div>
+        <div class="field"><label>ประเภทบริการ</label><select class="input" data-df="serviceType">${opts(b.options.serviceTypes, f.serviceType)}</select></div>
+        <div class="field"><label>กลุ่มอายุ</label><select class="input" data-df="ageGroup">${opts(b.options.ageGroups.map(a => [a, a + ' ปี']), f.ageGroup)}</select></div>
+        <div class="field"><label>เพศ</label><select class="input" data-df="sex">${opts(['ชาย', 'หญิง'], f.sex)}</select></div>
+        <div class="field"><label>ประเภทผู้ป่วย</label><select class="input" data-df="patientType">${PATIENT_TYPES.map(p => `<option value="${p[0]}" ${f.patientType === p[0] ? 'selected' : ''}>${p[1]}</option>`).join('')}</select></div>
+        <div class="field"><label>สถานะการติดตาม</label><select class="input" data-df="followStatus">${opts(b.options.follow, f.followStatus)}</select></div>
+        <div class="field"><label>ผู้รับผิดชอบ อสม.</label><select class="input" data-df="volunteerId">${opts(b.volunteers.map(v => [v.id, v.name + ' (ม.' + v.villageNo + ')']), f.volunteerId)}</select></div>
+      </div>
+      <div class="field" style="margin-top:12px"><label style="font-size:.76rem;color:var(--muted)">หมู่บ้าน (เลือกได้หลายหมู่)</label><div class="chips">${vchips}</div></div>
+      <div class="active-filters"><i data-lucide="sliders-horizontal"></i> กำลังแสดง: ${dashFilterText(f).map(t => `<span class="tag">${esc(t)}</span>`).join('')}<button class="btn btn-ghost btn-sm" data-act="dash-reset"><i data-lucide="rotate-ccw"></i> รีเซ็ตตัวกรอง</button></div>
+    </div>
+  </div>
+  <div id="dashBody">${dashSkeleton()}</div>`;
+  icons();
+  loadDashboard(App.dashStale);
+}
+function dashSkeleton() { return `<div class="kpi-grid">${Array(12).fill('<div class="kpi"><div class="skeleton" style="width:48px;height:48px"></div><div style="flex:1"><div class="skeleton" style="height:12px;width:70%;margin-bottom:8px"></div><div class="skeleton" style="height:22px;width:45%"></div></div></div>').join('')}</div><div class="chart-grid">${Array(4).fill('<div class="card"><div class="skeleton" style="height:260px"></div></div>').join('')}</div>`; }
+async function loadDashboard(noCache) {
+  const body = $('#dashBody'); if (!body) return;
+  try {
+    const d = await api('getDashboardData', { filters: App.dashFilters, noCache: !!noCache }, { retry: true });
+    App.dashStale = false; App.lastData.dash = d;
+    if (App.view !== 'dashboard' || !$('#dashBody')) return;
+    renderDashBody(d);
+  } catch (e) {
+    if ($('#dashBody')) { $('#dashBody').innerHTML = `<div class="card">${stateBox('error', 'โหลดข้อมูล Dashboard ไม่สำเร็จ', e.message, 'dash-refresh')}</div>`; icons(); }
+  }
+}
+function renderDashBody(d) {
+  const k = d.kpi, pct = (a, b) => b ? (a / b * 100).toFixed(1) + '%' : '';
+  const K = [
+    ['population', 'จำนวนประชากร', 'users', 'k-em', 'คน (มีชีวิต)'], ['households', 'จำนวนครัวเรือน', 'home', 'k-blue', 'ครัวเรือน'],
+    ['villages', 'จำนวนหมู่บ้าน', 'map', 'k-teal', 'หมู่บ้าน'], ['centers', 'จำนวน ศสมช.', 'building-2', 'k-indigo', 'แห่ง'],
+    ['volunteers', 'จำนวน อสม.', 'badge-check', 'k-em', 'คน (ปฏิบัติงาน)'], ['serviceRecipients', 'ผู้รับบริการ', 'stethoscope', 'k-blue', fmtNum(k.serviceVisits) + ' ครั้ง'],
+    ['dm', 'ผู้ป่วยเบาหวาน (DM)', 'droplet', 'k-orange', pct(k.dm, k.population) + ' ของประชากร'], ['ht', 'ผู้ป่วยความดันสูง (HT)', 'heart-pulse', 'k-red', pct(k.ht, k.population) + ' ของประชากร'],
+    ['elderly', 'ผู้สูงอายุ (60 ปีขึ้นไป)', 'person-standing', 'k-purple', pct(k.elderly, k.population) + ' ของประชากร'], ['bedridden', 'ผู้ป่วยติดบ้าน/ติดเตียง', 'bed', 'k-orange', 'ADL ≤ 11'],
+    ['risk', 'กลุ่มเสี่ยง (ผลคัดกรอง)', 'alert-triangle', 'k-amber', 'จากผู้คัดกรอง ' + fmtNum(k.screened) + ' คน'], ['followUp', 'ผู้ที่ต้องติดตาม', 'bell-ring', 'k-red', 'คน']
+  ];
+  $('#dashMeta').textContent = `ข้อมูลคำนวณจากฐานข้อมูลจริง · ประมวลผล ${fmtDT(d.generatedAt)}${d.cached ? ' (แคช)' : ''} · นำเข้าล่าสุด ${d.lastImportAt ? fmtDT(d.lastImportAt) : '-'}`;
+  const ch = d.charts;
+  $('#dashBody').innerHTML = `
+  <div class="kpi-grid">${K.map(x => `<div class="kpi ${x[3]}"><div class="kpi-icon"><i data-lucide="${x[2]}"></i></div><div class="kpi-body"><div class="kpi-label">${x[1]}</div><div class="kpi-value">${fmtNum(k[x[0]])}</div><div class="kpi-sub">${esc(x[4])}</div></div></div>`).join('')}</div>
+  <div class="chart-grid">
+    <div class="card wide"><div class="card-title"><h3><i data-lucide="bar-chart-3"></i> ประชากรแยกตามหมู่บ้าน</h3><small>คน</small></div><div class="chart-box"><canvas id="cPopV" aria-label="กราฟประชากรรายหมู่บ้าน"></canvas></div></div>
+    <div class="card"><div class="card-title"><h3><i data-lucide="pie-chart"></i> ประชากรแยกตามเพศ</h3></div><div class="chart-box"><canvas id="cSex"></canvas></div></div>
+    <div class="card"><div class="card-title"><h3><i data-lucide="bar-chart-2"></i> ประชากรแยกตามกลุ่มอายุ</h3><small>ปี</small></div><div class="chart-box"><canvas id="cAge"></canvas></div></div>
+    <div class="card"><div class="card-title"><h3><i data-lucide="heart-pulse"></i> ผู้ป่วย DM/HT รายหมู่บ้าน</h3><small>ทะเบียนที่กำลังรักษา</small></div><div class="chart-box"><canvas id="cNcd"></canvas></div></div>
+    <div class="card"><div class="card-title"><h3><i data-lucide="activity"></i> ผลการคัดกรองสุขภาพ</h3><small>ผลล่าสุดต่อคน</small></div><div class="chart-box"><canvas id="cScr"></canvas></div></div>
+    <div class="card"><div class="card-title"><h3><i data-lucide="trending-up"></i> ผู้รับบริการรายเดือน</h3><small>${App.dashFilters.year && !App.dashFilters.fiscalYear ? 'ปีปฏิทิน ' + App.dashFilters.year : 'ปีงบประมาณ ' + (App.dashFilters.fiscalYear || currentFY())}</small></div><div class="chart-box"><canvas id="cMonth"></canvas></div></div>
+    <div class="card"><div class="card-title"><h3><i data-lucide="award"></i> ผลงาน อสม. รายหมู่บ้าน</h3><small>ครั้ง</small></div><div class="chart-box"><canvas id="cVol"></canvas></div></div>
+  </div>
+  <div class="card mb"><div class="card-title"><h3><i data-lucide="table-2"></i> เปรียบเทียบรายหมู่บ้าน</h3><small>${d.villageTable.length} หมู่บ้าน</small></div>${villageTableHTML(d.villageTable)}</div>`;
+  icons();
+  drawDashCharts(ch);
+}
+function villageTableHTML(rows) {
+  if (!rows.length) return stateBox('empty', 'ไม่มีข้อมูล', '');
+  const cols = [['villageNo', 'หมู่'], ['villageName', 'หมู่บ้าน'], ['population', 'ประชากร'], ['households', 'ครัวเรือน'], ['volunteers', 'อสม.'], ['elderly', 'ผู้สูงอายุ'], ['dm', 'DM'], ['ht', 'HT'], ['bedridden', 'ติดบ้าน/เตียง'], ['services', 'บริการ'], ['screenCoverage', 'คัดกรอง 35+ (%)'], ['urgent', 'เร่งด่วน'], ['missedNcd', 'ขาดนัด NCD'], ['followUp', 'ต้องติดตาม']];
+  return `<div class="table-wrap"><table class="dtable"><thead><tr>${cols.map(c => `<th class="${c[0] === 'villageName' ? '' : 'num'}">${c[1]}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${cols.map(c => `<td class="${c[0] === 'villageName' ? '' : 'num'}" style="${c[0] === 'villageName' ? 'white-space:nowrap' : ''}">${c[0] === 'villageName' ? esc(r[c[0]]) : fmtNum(r[c[0]])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function chartBase(extra = {}) {
+  return Object.assign({ responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 14 } }, tooltip: { backgroundColor: '#0f172a', padding: 10, cornerRadius: 10, titleFont: { family: 'Prompt' }, bodyFont: { family: 'Prompt' } } },
+    scales: { x: { grid: { display: false }, ticks: { color: '#64748b' } }, y: { beginAtZero: true, grid: { color: '#eef2f1' }, border: { display: false }, ticks: { color: '#64748b', precision: 0 } } } }, extra);
+}
+function makeChart(id, cfg) {
+  const el = document.getElementById(id); if (!el || !window.Chart) return;
+  if (App.charts[id]) App.charts[id].destroy();
+  const all = cfg.data.datasets.flatMap(ds => ds.data);
+  el.closest('.chart-box').classList.toggle('is-empty', !all.some(v => v > 0));
+  App.charts[id] = new Chart(el, cfg);
+}
+const barDs = (label, data, color, stack) => ({ label, data, backgroundColor: color, borderRadius: 4, borderSkipped: 'start', maxBarThickness: 38, borderColor: '#fff', borderWidth: stack ? { top: 2 } : 0, stack });
+function drawDashCharts(ch) {
+  if (!window.Chart) { $$('.chart-box').forEach(b => b.innerHTML = '<div class="state">ไม่สามารถโหลด Chart.js ได้ (ตรวจสอบอินเทอร์เน็ต)</div>'); return; }
+  Chart.defaults.font.family = 'Prompt, system-ui, sans-serif'; Chart.defaults.color = '#475569';
+  makeChart('cPopV', { type: 'bar', data: { labels: ch.villages, datasets: [barDs('ประชากร', ch.popByVillage, PALETTE[2])] }, options: chartBase({ plugins: { legend: { display: false }, tooltip: { callbacks: { title: it => ch.villageNames[it[0].dataIndex] } } } }) });
+  makeChart('cSex', { type: 'doughnut', data: { labels: ch.popBySex.labels, datasets: [{ data: ch.popBySex.data, backgroundColor: [PALETTE[0], PALETTE[1], '#cbd5e1'], borderColor: '#fff', borderWidth: 2, hoverOffset: 6 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, generateLabels: c => c.data.labels.map((l, i) => ({ text: `${l} ${fmtNum(c.data.datasets[0].data[i])}`, fillStyle: c.data.datasets[0].backgroundColor[i], strokeStyle: '#fff', pointStyle: 'circle', index: i })) } } } } });
+  makeChart('cAge', { type: 'bar', data: { labels: ch.popByAge.labels, datasets: [barDs('ประชากร', ch.popByAge.data, PALETTE[0])] }, options: chartBase({ plugins: { legend: { display: false } } }) });
+  const stacked = chartBase(); stacked.scales.x.stacked = true; stacked.scales.y.stacked = true;
+  makeChart('cNcd', { type: 'bar', data: { labels: ch.villages, datasets: [barDs('DM', ch.ncdByVillage.DM, PALETTE[0], 's'), barDs('HT', ch.ncdByVillage.HT, PALETTE[1], 's'), barDs('DM+HT', ch.ncdByVillage.DMHT, PALETTE[2], 's')] }, options: stacked });
+  makeChart('cScr', { type: 'bar', data: { labels: ch.screening.labels, datasets: [barDs('ความดันโลหิต', ch.screening.bp, PALETTE[0]), barDs('น้ำตาลในเลือด', ch.screening.glucose, PALETTE[1])] }, options: chartBase() });
+  makeChart('cMonth', { type: 'line', data: { labels: ch.monthlyServices.labels, datasets: [
+    { label: 'จำนวนครั้ง', data: ch.monthlyServices.visits, borderColor: PALETTE[0], backgroundColor: 'rgba(42,120,214,.10)', fill: true, tension: .35, borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#fff', pointBorderWidth: 2 },
+    { label: 'จำนวนคน', data: ch.monthlyServices.persons, borderColor: PALETTE[2], backgroundColor: 'transparent', tension: .35, borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#fff', pointBorderWidth: 2 }] }, options: chartBase() });
+  const st2 = chartBase(); st2.scales.x.stacked = true; st2.scales.y.stacked = true;
+  makeChart('cVol', { type: 'bar', data: { labels: ch.villages, datasets: [barDs('เยี่ยมบ้าน', ch.volunteerPerf.homeVisits, PALETTE[0], 'v'), barDs('คัดกรอง', ch.volunteerPerf.screenings, PALETTE[1], 'v'), barDs('บริการ', ch.volunteerPerf.services, PALETTE[2], 'v')] }, options: st2 });
+}
+function exportDashboard() {
+  const d = App.lastData.dash; if (!d) return toast('ยังไม่มีข้อมูล', 'warn');
+  if (!window.XLSX) return toast('ไม่สามารถโหลด SheetJS ได้', 'error');
+  const wb = XLSX.utils.book_new();
+  const kp = [['ตัวชี้วัด', 'ค่า'], ['เงื่อนไข', dashFilterText(App.dashFilters).join(' | ')], ['ประมวลผลเมื่อ', fmtDT(d.generatedAt)]].concat(Object.entries({ population: 'ประชากร', households: 'ครัวเรือน', villages: 'หมู่บ้าน', centers: 'ศสมช.', volunteers: 'อสม.', serviceRecipients: 'ผู้รับบริการ (คน)', serviceVisits: 'บริการ (ครั้ง)', dm: 'DM', ht: 'HT', dmht: 'DM+HT', elderly: 'ผู้สูงอายุ', bedridden: 'ติดบ้าน/ติดเตียง', risk: 'กลุ่มเสี่ยง', followUp: 'ต้องติดตาม' }).map(([k, l]) => [l, d.kpi[k]]));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(kp), 'KPI');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(d.villageTable), 'รายหมู่บ้าน');
+  XLSX.writeFile(wb, `BN_SMART_Dashboard_${todayISO()}.xlsx`);
+}
+
+/* =====================================================================
+ *  GENERIC MODULE (registry list + form)
+ * =================================================================== */
+function modState(view) {
+  const v = VIEWS[view];
+  if (!App.mod[view]) App.mod[view] = { tab: v.sheets.filter(readable)[0], page: 1, pageSize: 25, search: '', villages: [], filters: {}, year: '', month: '', ageGroup: '', sex: '' };
+  return App.mod[view];
+}
+function filterFields(sheet) { return sc(sheet).fields.filter(f => f.filt && (f.t === 'select' || f.t === 'ref' || f.o)); }
+function renderModule(view) {
+  const v = VIEWS[view], st = modState(view);
+  const sheets = v.sheets.filter(readable);
+  if (!sheets.includes(st.tab)) st.tab = sheets[0];
+  const sheet = st.tab, s = sc(sheet);
+  const villageSel = s.fields.some(f => f.k === 'VillageNo') && App.boot.villages.length > 1;
+  const ff = filterFields(sheet).filter(f => f.k !== 'VillageNo');
+  const person = s.person || s.personOptional || sheet === 'POPULATION';
+  $('#view').innerHTML = `
+  <div class="page-head">
+    <div><h1><span class="ph-icon"><i data-lucide="${v.icon}"></i></span>${esc(v.title)}</h1><p>${esc(v.sub)}${s.sensitive ? ' · <b style="color:var(--purple-700)">ข้อมูลอ่อนไหว — การเข้าถึงถูกบันทึก</b>' : ''}</p></div>
+    <div class="head-actions no-print">
+      ${s.write ? `<button class="btn btn-primary" data-act="mod-add"><i data-lucide="plus"></i> เพิ่ม${esc(s.title)}</button>` : ''}
+      ${can('export') ? `<button class="btn btn-outline" data-act="mod-export" data-fmt="xlsx"><i data-lucide="file-down"></i> Excel</button><button class="btn btn-outline" data-act="mod-export" data-fmt="csv"><i data-lucide="file-text"></i> CSV</button>` : ''}
+      <button class="btn btn-outline" data-act="print"><i data-lucide="printer"></i></button>
+    </div>
+  </div>
+  ${sheets.length > 1 ? `<div class="tabs no-print">${sheets.map(sh => `<button class="tab ${sh === sheet ? 'active' : ''}" data-act="mod-tab" data-sheet="${sh}"><i data-lucide="${sc(sh).icon || 'table'}"></i>${esc(sc(sh).title)}</button>`).join('')}</div>` : ''}
+  <div id="modSummary" class="summary-row"></div>
+  <div class="card filter-card no-print ${window.innerWidth <= 760 && !App.dashFilterOpen ? 'collapsed' : ''}">
+    <button class="btn btn-ghost btn-block filter-toggle" data-act="toggle-filter" style="justify-content:space-between"><span style="display:flex;gap:8px;align-items:center"><i data-lucide="search"></i> ค้นหาและตัวกรอง</span><i data-lucide="chevron-down"></i></button>
+    <div class="filter-body"><div class="toolbar">
+      <div class="field search"><label>ค้นหา</label><div class="search-box"><i data-lucide="search"></i><input class="input" id="modSearch" placeholder="${person ? 'ชื่อ-สกุล / รหัส / บ้านเลขที่' : 'คำค้นหา'}" value="${esc(st.search)}"></div></div>
+      ${villageSel ? `<div class="field"><label>หมู่บ้าน</label>${villageSelect(st.villages)}</div>` : ''}
+      ${ff.map(f => `<div class="field"><label>${esc(f.l)}</label><select class="input" data-mf="${f.k}">${f.t === 'ref' ? opts(refOptions(f), st.filters[f.k]) : opts(f.o || [], st.filters[f.k])}</select></div>`).join('')}
+      ${s.dateField ? `<div class="field"><label>ปี (พ.ศ.)</label><select class="input" data-ms="year">${yearOptions(st.year, false)}</select></div><div class="field"><label>เดือน</label><select class="input" data-ms="month">${monthOptions(st.month)}</select></div>` : ''}
+      ${person ? `<div class="field"><label>กลุ่มอายุ</label><select class="input" data-ms="ageGroup">${opts(App.boot.options.ageGroups.map(a => [a, a + ' ปี']), st.ageGroup)}</select></div>` : ''}
+      ${person && sheet !== 'POPULATION' ? `<div class="field"><label>เพศ</label><select class="input" data-ms="sex">${opts(['ชาย', 'หญิง'], st.sex)}</select></div>` : ''}
+      <div><button class="btn btn-ghost" data-act="mod-reset"><i data-lucide="rotate-ccw"></i> รีเซ็ต</button></div>
+    </div>
+    <div class="active-filters" id="modActive"></div>
+  </div></div>
+  <div class="card" id="modTable">${stateBox('loading')}</div>`;
+  icons();
+  loadModule();
+}
+function refOptions(f) {
+  if (f.ref === 'VOLUNTEERS') return App.boot.volunteers.map(v => [v.id, v.name + ' (ม.' + v.villageNo + ')']);
+  if (f.ref === 'HEALTH_CENTERS') return App.boot.centers.map(c => [c.id, c.name]);
+  return [];
+}
+function villageSelect(sel, ctx = 'mod') {
+  const label = sel.length ? 'หมู่ ' + sel.slice().sort((a, b) => a - b).join(', ') : 'ทุกหมู่บ้าน';
+  return `<details class="vsel"><summary><span>${esc(label)}</span><i data-lucide="chevron-down"></i></summary><div class="vsel-pop"><label class="all"><input type="checkbox" data-vctx="${ctx}" value="all" ${sel.length ? '' : 'checked'}> ทุกหมู่บ้าน</label>${App.boot.villages.map(v => `<label title="${esc(v.name)}"><input type="checkbox" data-vctx="${ctx}" value="${v.no}" ${sel.includes(v.no) ? 'checked' : ''}> หมู่ ${v.no}</label>`).join('')}</div></details>`;
+}
+function modActiveText(st, sheet) {
+  const t = [];
+  if (st.search) t.push('ค้นหา "' + st.search + '"');
+  t.push(st.villages.length ? 'หมู่ ' + st.villages.join(', ') : 'ทุกหมู่บ้านที่มีสิทธิ์');
+  Object.entries(st.filters).forEach(([k, v]) => { if (v) { const f = sc(sheet).fields.find(x => x.k === k); t.push((f ? f.l + ': ' : '') + (f && f.t === 'ref' ? (f.ref === 'VOLUNTEERS' ? volunteerName(v) : centerName(v)) : v)); } });
+  if (st.year) t.push('ปี ' + st.year); if (st.month) t.push(TH_MONTHS_FULL[st.month - 1]);
+  if (st.ageGroup) t.push('อายุ ' + st.ageGroup); if (st.sex) t.push('เพศ' + st.sex);
+  return t;
+}
+function modPayload(st) { return { sheet: st.tab, page: st.page, pageSize: st.pageSize, search: st.search, villages: st.villages, filters: st.filters, year: st.year, month: st.month, ageGroup: st.ageGroup, sex: st.sex }; }
+async function loadModule() {
+  const view = App.view, st = modState(view), sheet = st.tab;
+  const box = $('#modTable'); if (!box) return;
+  $('#modActive').innerHTML = '<i data-lucide="sliders-horizontal"></i> เงื่อนไข: ' + modActiveText(st, sheet).map(t => `<span class="tag">${esc(t)}</span>`).join('');
+  box.innerHTML = stateBox('loading'); icons();
+  try {
+    const d = await api('listRecords', modPayload(st), { retry: true });
+    if (App.view !== view || modState(view).tab !== sheet) return;
+    App.lastData.list = d;
+    renderModSummary(d, sheet, st);
+    renderModTable(d, sheet);
+  } catch (e) {
+    if ($('#modTable')) { $('#modTable').innerHTML = stateBox(e.code === 'FORBIDDEN' ? 'locked' : 'error', e.code === 'FORBIDDEN' ? 'ไม่มีสิทธิ์เข้าถึง' : 'โหลดข้อมูลไม่สำเร็จ', e.message, e.code === 'FORBIDDEN' ? '' : 'mod-reload'); icons(); }
+  }
+}
+function renderModSummary(d, sheet, st) {
+  let h = '';
+  if (d.period) h += `<div class="sum-pill period"><i data-lucide="calendar-check"></i>วันนี้ <b>${fmtNum(d.period.today)}</b></div><div class="sum-pill period">เดือนนี้ <b>${fmtNum(d.period.month)}</b></div><div class="sum-pill period">ปีนี้ <b>${fmtNum(d.period.year)}</b></div>`;
+  h += `<div class="sum-pill" style="cursor:default"><i data-lucide="list"></i>ตามเงื่อนไข <b>${fmtNum(d.total)}</b> รายการ</div>`;
+  Object.entries(d.summary || {}).forEach(([k, c]) => {
+    const f = sc(sheet).fields.find(x => x.k === k);
+    Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 8).forEach(([val, n]) => {
+      const active = st.filters[k] === val;
+      h += `<button class="sum-pill ${active ? 'active' : ''}" data-act="mod-sumfilter" data-k="${esc(k)}" data-v="${esc(val)}" title="${esc(f ? f.l : k)}">${statusBadge(val)} <b>${fmtNum(n)}</b></button>`;
+    });
+  });
+  $('#modSummary').innerHTML = h; icons();
+}
+function tableColumns(sheet) {
+  const s = sc(sheet);
+  const cols = [];
+  const idf = s.fields.find(f => f.k === s.idField);
+  if (idf) cols.push(idf);
+  if (s.person || s.personOptional) cols.push({ k: '_personName', l: 'ชื่อ-สกุล', t: '_person' });
+  s.fields.forEach(f => { if (f.list && f.k !== s.idField && f.k !== 'PersonID') cols.push(f); });
+  return cols;
+}
+function cellHTML(f, r) {
+  const v = r[f.k];
+  if (f.t === '_person') return `<div class="cell-name"><b>${esc(r._personName || '-')}</b><small>${esc(r.PersonID || '')}${r._age !== undefined && r._age !== null ? ' · ' + r._age + ' ปี' : ''}</small></div>`;
+  if (f.k === 'FirstName' && r.Prefix) return esc(r.Prefix + v);
+  if (f.t === 'date') return fmtDate(v);
+  if (f.t === 'datetime') return fmtDT(v);
+  if (f.t === 'village') return v ? 'หมู่ ' + esc(v) : '-';
+  if (f.t === 'ref') return esc(f.ref === 'VOLUNTEERS' ? volunteerName(v) : f.ref === 'HEALTH_CENTERS' ? centerName(v) : v) || '-';
+  if (f.o || f.ro) return statusBadge(v);
+  if (f.t === 'number' || f.t === 'int') return v === '' ? '-' : fmtNum(v);
+  return v === '' || v === undefined ? '<span class="muted">-</span>' : esc(v);
+}
+function renderModTable(d, sheet) {
+  const s = sc(sheet), cols = tableColumns(sheet), box = $('#modTable');
+  if (!d.rows.length) {
+    box.innerHTML = stateBox('empty', 'ไม่พบข้อมูล', d.total === 0 && !App.mod[App.view].search ? 'ยังไม่มีข้อมูลตามเงื่อนไขที่เลือก' + (s.write ? ' — กด "เพิ่ม" เพื่อบันทึกรายการแรก' : '') : 'ลองเปลี่ยนเงื่อนไขการค้นหา');
+    icons(); return;
+  }
+  const person = s.person || s.personOptional;
+  box.innerHTML = `<div class="table-wrap cards-wrap"><table class="dtable cards"><thead><tr>${cols.map(c => `<th class="${c.t === 'number' || c.t === 'int' ? 'num' : ''}">${esc(c.l)}</th>`).join('')}<th class="no-print"></th></tr></thead><tbody>
+    ${d.rows.map((r, i) => `<tr>${cols.map(c => `<td data-label="${esc(c.l)}" class="${c.t === '_person' ? 'cell-name' : ''} ${c.t === 'number' || c.t === 'int' ? 'num' : ''}">${cellHTML(c, r)}</td>`).join('')}
+    <td class="no-print" data-label=""><div class="row-actions"><button class="btn btn-outline btn-sm" data-act="mod-view" data-i="${i}" title="ดูรายละเอียด"><i data-lucide="eye"></i><span class="only-mobile-nav">ดู</span></button>${s.write ? `<button class="btn btn-outline btn-sm" data-act="mod-edit" data-i="${i}" title="แก้ไข"><i data-lucide="pencil"></i><span class="only-mobile-nav">แก้ไข</span></button>` : ''}${(person && r.PersonID) || sheet === 'POPULATION' ? `<button class="btn btn-outline btn-sm" data-act="profile" data-pid="${esc(r.PersonID)}" title="ประวัติสุขภาพ"><i data-lucide="file-heart"></i><span class="only-mobile-nav">ประวัติ</span></button>` : ''}</div></td></tr>`).join('')}
+  </tbody></table></div>
+  <div class="pager no-print"><div>แสดง ${fmtNum((d.page - 1) * d.pageSize + 1)}–${fmtNum(Math.min(d.page * d.pageSize, d.total))} จาก ${fmtNum(d.total)} รายการ</div>
+    <div class="pg"><select class="input" data-act-change="mod-pagesize" style="width:auto;min-height:36px;padding:4px 8px">${[10, 25, 50, 100].map(n => `<option ${n === d.pageSize ? 'selected' : ''}>${n}</option>`).join('')}</select>
+    <button class="btn btn-outline btn-sm" data-act="mod-page" data-p="${d.page - 1}" ${d.page <= 1 ? 'disabled' : ''} aria-label="ก่อนหน้า"><i data-lucide="chevron-left"></i></button><span>หน้า ${d.page}/${d.pages}</span><button class="btn btn-outline btn-sm" data-act="mod-page" data-p="${d.page + 1}" ${d.page >= d.pages ? 'disabled' : ''} aria-label="ถัดไป"><i data-lucide="chevron-right"></i></button></div></div>`;
+  icons();
+}
+
+/* ---------- record detail ---------- */
+function displayValue(f, v) {
+  if (v === '' || v === undefined || v === null) return '<span class="muted">-</span>';
+  if (f.t === 'date') return fmtDate(v);
+  if (f.t === 'datetime') return fmtDT(v);
+  if (f.t === 'village') return 'หมู่ ' + esc(v) + ' ' + esc(villageName(v));
+  if (f.t === 'ref') return esc(f.ref === 'VOLUNTEERS' ? volunteerName(v) : centerName(v)) + ` <small class="muted">(${esc(v)})</small>`;
+  if (f.t === 'bool') return v ? 'ใช่' : 'ไม่ใช่';
+  if (f.ro && f.o) return statusBadge(v);
+  if (f.o) return statusBadge(v);
+  return esc(v);
+}
+function openDetail(sheet, r) {
+  const s = sc(sheet);
+  const meta = ['CreatedAt', 'UpdatedAt', 'UpdatedBy'];
+  const fields = s.fields.filter(f => !f.virtual && !meta.includes(f.k));
+  const person = (s.person || s.personOptional) && r.PersonID;
+  openModal({
+    id: 'detail', size: 'lg', title: `<i data-lucide="${s.icon || 'file'}"></i> ${esc(s.title)} <span class="tag">${esc(r[s.idField])}</span>`,
+    body: `${person ? `<div class="profile-head" style="padding:12px"><div class="avatar">${esc((r._personName || '?').replace(/^(นาย|นางสาว|นาง|ด\.ช\.|ด\.ญ\.)/, '').charAt(0))}</div><div><b>${esc(r._personName)}</b><div class="muted" style="font-size:.85rem">${esc(r.PersonID)} · ${esc(r._sex || '')} ${r._age !== undefined && r._age !== null ? r._age + ' ปี' : ''} · หมู่ ${esc(r.VillageNo)}</div></div></div>` : ''}
+      <div class="detail-grid">${fields.map(f => `<div class="di ${f.full ? 'full' : ''} ${f.ro ? 'computed' : ''}"><span>${esc(f.l)}${f.ro ? ' · คำนวณตามเกณฑ์' : ''}</span><div>${displayValue(f, r[f.k])}</div></div>`).join('')}</div>
+      <div class="muted" style="font-size:.78rem;margin-top:12px">สร้าง ${fmtDT(r.CreatedAt)} · ปรับปรุง ${fmtDT(r.UpdatedAt)} โดย ${esc(r.UpdatedBy || '-')}</div>`,
+    foot: `${person || sheet === 'POPULATION' ? `<button class="btn btn-outline" data-act="profile" data-pid="${esc(r.PersonID)}"><i data-lucide="file-heart"></i> ประวัติสุขภาพ</button>` : ''}${s.write ? `<button class="btn btn-primary" data-act="detail-edit"><i data-lucide="pencil"></i> แก้ไข</button>` : ''}<button class="btn btn-ghost" data-act="close-modal">ปิด</button>`
+  });
+  App.detail = { sheet, r };
+}
+
+/* ---------- record form ---------- */
+function formFields(sheet) {
+  const s = sc(sheet);
+  return s.fields.filter(f => {
+    if (f.ro || f.t === 'id' || ['CreatedAt', 'UpdatedAt', 'UpdatedBy'].includes(f.k)) return sheet === 'VILLAGES' && f.k === 'VillageNo';
+    if ((s.person || s.personOptional) && (f.k === 'VillageNo' || f.k === 'PersonID')) return false;
+    return true;
+  });
+}
+function inputHTML(f, v, sheet) {
+  const name = `name="${f.k}" id="f_${f.k}"`;
+  const req = f.req ? 'required' : '';
+  v = v === undefined || v === null ? '' : v;
+  if (f.t === 'select') return `<select class="input" ${name} ${req}>${opts(f.o || [], v, '— เลือก —')}</select>`;
+  if (f.t === 'village') return `<select class="input" ${name} ${req}>${opts(App.boot.villages.map(x => [x.no, 'หมู่ ' + x.no + ' ' + x.name]), v, '— เลือกหมู่บ้าน —')}</select>`;
+  if (f.t === 'ref') return `<select class="input" ${name} ${req}>${opts(refOptions(f), v, '— ไม่ระบุ —')}</select>`;
+  if (f.t === 'textarea') return `<textarea class="input" ${name} ${req} maxlength="5000" placeholder="${esc(f.ph || '')}">${esc(v)}</textarea>`;
+  if (f.t === 'date') return `<input class="input" type="date" ${name} ${req} value="${esc(v)}" ${f.nf ? `max="${todayISO()}"` : ''}>`;
+  if (f.t === 'time') return `<input class="input" type="time" ${name} ${req} value="${esc(v)}">`;
+  if (f.t === 'number' || f.t === 'int') return `<input class="input" type="number" inputmode="decimal" ${name} ${req} value="${esc(v)}" ${f.min !== undefined ? `min="${f.min}"` : ''} ${f.max !== undefined ? `max="${f.max}"` : ''} step="${f.t === 'int' ? 1 : 'any'}">`;
+  if (f.t === 'phone') return `<input class="input" type="tel" inputmode="tel" ${name} ${req} value="${esc(v)}" maxlength="12" placeholder="0xxxxxxxxx">`;
+  if (f.t === 'cid') return `<input class="input" inputmode="numeric" ${name} maxlength="17" autocomplete="off" placeholder="เว้นว่างได้ / เว้นว่างเพื่อคงค่าเดิม">`;
+  if (f.t === 'bool') return `<select class="input" ${name}><option value="false">ไม่ใช่</option><option value="true" ${v ? 'selected' : ''}>ใช่</option></select>`;
+  return `<input class="input" ${name} ${req} value="${esc(v)}" maxlength="500" placeholder="${esc(f.ph || '')}">`;
+}
+function openForm(sheet, rec) {
+  const s = sc(sheet), isNew = !rec;
+  rec = rec || {};
+  const person = s.person || s.personOptional;
+  const fields = formFields(sheet);
+  const cidHint = sheet === 'POPULATION' ? `<span class="hint">${rec.CIDMasked ? 'ค่าปัจจุบัน: ' + esc(rec.CIDMasked) + ' · ' : ''}ระบบเก็บเฉพาะค่าแฮชและค่าที่ปกปิด ไม่เก็บเลขเต็ม</span>` : '';
+  openModal({
+    id: 'form', size: 'lg', title: `<i data-lucide="${isNew ? 'plus-circle' : 'pencil'}"></i> ${isNew ? 'เพิ่ม' : 'แก้ไข'}${esc(s.title)}`,
+    body: `<div id="formErr"></div><form id="recForm" novalidate><div class="form-grid">
+      ${person ? `<div class="field full"><label>บุคคล ${s.person ? '<span class="req">*</span>' : '(ถ้ามี)'}</label>${personPicker(rec)}</div>` : ''}
+      ${fields.map(f => `<div class="field ${f.full ? 'full' : ''}"><label for="f_${f.k}">${esc(f.l)} ${f.req ? '<span class="req">*</span>' : ''}</label>${inputHTML(f, rec[f.k], sheet)}${f.t === 'cid' ? cidHint : ''}${f.help ? `<span class="hint">${esc(f.help)}</span>` : ''}<span class="err" data-err="${f.k}"></span></div>`).join('')}
+    </div>${s.fields.some(f => f.ro && !['CreatedAt', 'UpdatedAt', 'UpdatedBy'].includes(f.k) && f.k !== 'CIDMasked') ? '<div class="alert alert-info" style="margin-top:16px"><i data-lucide="calculator"></i><div>ค่าผลประเมิน (เช่น BMI ระดับความดัน กลุ่ม ADL) คำนวณโดยเซิร์ฟเวอร์ตามเกณฑ์ที่กำหนดและตรวจสอบได้ ไม่ใช่การวินิจฉัยโรค</div></div>' : ''}</form>`,
+    foot: `<button class="btn btn-ghost" data-act="close-modal">ยกเลิก</button><button class="btn btn-primary" data-act="form-save"><i data-lucide="save"></i> บันทึก</button>`
+  });
+  App.form = { sheet, rec, isNew };
+}
+function personPicker(rec) {
+  if (rec.PersonID) return `<div id="ppBox"><div class="pp-selected"><div><b>${esc(rec._personName || rec.PersonID)}</b><div class="muted" style="font-size:.82rem">${esc(rec.PersonID)}${rec.VillageNo ? ' · หมู่ ' + esc(rec.VillageNo) : ''}</div></div><button type="button" class="btn btn-ghost btn-sm" data-act="pp-clear">เปลี่ยน</button></div><input type="hidden" name="PersonID" value="${esc(rec.PersonID)}"></div>`;
+  return `<div id="ppBox"><div class="person-pick"><div class="search-box"><i data-lucide="search"></i><input class="input" id="ppInput" placeholder="พิมพ์ชื่อ-สกุล / PersonID / เลขบัตร 13 หลัก (อย่างน้อย 2 ตัวอักษร)" autocomplete="off"></div><div class="pp-results" id="ppResults" hidden></div></div><input type="hidden" name="PersonID" value=""><span class="err" data-err="PersonID"></span></div>`;
+}
+const personSearch = debounce(async q => {
+  const box = $('#ppResults'); if (!box) return;
+  if (q.trim().length < 2) { box.hidden = true; return; }
+  box.hidden = false; box.innerHTML = '<div class="pp-item muted">กำลังค้นหา...</div>';
+  try {
+    const d = await api('searchPersons', { q }, { silent: true });
+    if (!$('#ppResults')) return;
+    App.ppRows = d.rows;
+    box.innerHTML = d.rows.length ? d.rows.map((p, i) => `<button type="button" class="pp-item" data-act="pp-pick" data-i="${i}"><b>${esc(p.name)}</b> ${p.LifeStatus && p.LifeStatus !== 'มีชีวิต' ? statusBadge(p.LifeStatus) : ''}<br><small>${esc(p.PersonID)} · หมู่ ${p.VillageNo} บ้านเลขที่ ${esc(p.HouseNo || '-')} · ${esc(p.Sex || '')} ${p.Age !== null ? p.Age + ' ปี' : ''} ${p.CIDMasked ? '· ' + esc(p.CIDMasked) : ''}</small></button>`).join('') : '<div class="pp-item muted">ไม่พบบุคคลในหมู่บ้านที่มีสิทธิ์ — เพิ่มในเมนูทะเบียนประชาชนก่อน</div>';
+  } catch (e) { if ($('#ppResults')) box.innerHTML = `<div class="pp-item" style="color:var(--critical)">${esc(e.message)}</div>`; }
+}, 350);
+function collectForm(sheet) {
+  const form = $('#recForm'), s = sc(sheet), rec = {};
+  const errs = {};
+  $$('[data-err]', form).forEach(e => e.textContent = '');
+  $$('.input', form).forEach(e => e.classList.remove('invalid'));
+  formFields(sheet).forEach(f => {
+    const el = form.elements[f.k]; if (!el) return;
+    let v = el.value.trim();
+    if (f.t === 'bool') v = v === 'true';
+    if (f.req && v === '') errs[f.k] = 'จำเป็นต้องกรอก';
+    else if (v !== '' && (f.t === 'number' || f.t === 'int')) { const n = Number(v); if (isNaN(n)) errs[f.k] = 'ต้องเป็นตัวเลข'; else if ((f.min !== undefined && n < f.min) || (f.max !== undefined && n > f.max)) errs[f.k] = `ต้องอยู่ระหว่าง ${f.min}–${f.max}`; else if (f.t === 'int' && !Number.isInteger(n)) errs[f.k] = 'ต้องเป็นจำนวนเต็ม'; }
+    else if (v !== '' && f.t === 'phone' && !/^0\d{8,9}$/.test(v.replace(/[^\d]/g, ''))) errs[f.k] = 'เบอร์โทร 9–10 หลัก ขึ้นต้นด้วย 0';
+    else if (v !== '' && f.t === 'cid' && !validCID(v.replace(/[^\d]/g, ''))) errs[f.k] = 'เลขประจำตัวประชาชนไม่ถูกต้อง (ตรวจสอบหลักสุดท้าย)';
+    else if (v !== '' && f.t === 'date' && f.nf && v > todayISO()) errs[f.k] = 'วันที่ต้องไม่เกินวันนี้';
+    rec[f.k] = f.t === 'cid' ? v.replace(/[^\d]/g, '') : v;
+  });
+  if (s.person || s.personOptional) {
+    const pid = form.elements.PersonID ? form.elements.PersonID.value : '';
+    if (s.person && !pid) errs.PersonID = 'กรุณาเลือกบุคคล';
+    rec.PersonID = pid;
+  }
+  Object.entries(errs).forEach(([k, m]) => { const e = $(`[data-err="${k}"]`, form); if (e) e.textContent = m; const i = form.elements[k]; if (i && i.classList) i.classList.add('invalid'); });
+  return Object.keys(errs).length ? null : rec;
+}
+async function saveForm() {
+  const { sheet, rec: orig, isNew } = App.form;
+  const s = sc(sheet);
+  const rec = collectForm(sheet);
+  if (!rec) { $('#formErr').innerHTML = '<div class="alert alert-error"><i data-lucide="alert-circle"></i>กรุณาตรวจสอบข้อมูลที่ทำเครื่องหมายสีแดง</div>'; icons(); const first = $('#recForm .invalid'); if (first) first.focus(); return; }
+  if (!isNew) rec[s.idField] = orig[s.idField];
+  if (sheet === 'VILLAGES' && !isNew) rec.VillageNo = orig.VillageNo;
+  const btn = $('[data-act="form-save"]'); btn.disabled = true;
+  try {
+    const d = await api('saveRecord', { sheet, record: rec });
+    closeModal(); toast(d && d.isNew ? 'เพิ่มข้อมูลสำเร็จ' : 'บันทึกการแก้ไขสำเร็จ');
+    if (d.record && d.record.OverallRisk === 'เร่งด่วน') toast('ผลคัดกรองระดับเร่งด่วน — ระบบแจ้งเตือนเจ้าหน้าที่แล้ว กรุณาพิจารณาส่งต่อ', 'warn', 8000);
+    App.dashStale = true;
+    if (['VOLUNTEERS', 'HEALTH_CENTERS', 'VILLAGES'].includes(sheet)) refreshBootLists();
+    loadModule();
+  } catch (e) {
+    $('#formErr').innerHTML = `<div class="alert alert-error"><i data-lucide="alert-circle"></i><div>${esc(e.message)}${e.details && e.details.length > 1 ? '<ul style="margin:6px 0 0;padding-left:18px">' + e.details.map(x => `<li>${esc(x)}</li>`).join('') + '</ul>' : ''}</div></div>`; icons();
+    $('#formErr').scrollIntoView({ behavior: 'smooth' });
+  } finally { if (btn) btn.disabled = false; }
+}
+async function refreshBootLists() { try { const d = await api('getBootstrap', {}, { silent: true }); if (d && !d.mustChangePassword) { App.boot = d; } } catch (e) {} }
+
+/* ---------- person profile (ONE PERSON ONE HEALTH PROFILE) ---------- */
+async function openProfile(pid) {
+  openModal({ id: 'profile', size: 'lg', title: '<i data-lucide="file-heart"></i> ประวัติสุขภาพรายบุคคล', body: stateBox('loading') });
+  try {
+    const d = await api('getPersonProfile', { personId: pid });
+    const p = d.person;
+    const main = ['ServiceDate', 'ScreenDate', 'VisitDate', 'AssessDate', 'RegisterDate', 'ReferDate', 'EventDate'];
+    const body = `<div class="profile-head"><div class="avatar">${esc((p.FirstName || '?').charAt(0))}</div><div style="flex:1;min-width:200px"><h3>${esc((p.Prefix || '') + p.FirstName + ' ' + p.LastName)}</h3><div class="muted" style="font-size:.88rem">${esc(p.PersonID)} · ${esc(p.Sex)} · อายุ ${p.Age !== '' ? p.Age + ' ปี' : '-'} · เกิด ${fmtDate(p.BirthDate)}</div><div class="muted" style="font-size:.88rem">บ้านเลขที่ ${esc(p.HouseNo)} หมู่ ${esc(p.VillageNo)} ${esc(villageName(p.VillageNo))} · โทร ${esc(p.Phone || '-')} · ${esc(p.CIDMasked || 'ไม่มีเลขบัตร')}</div></div><div>${statusBadge(p.LifeStatus)} ${p.HealthRight ? `<span class="tag">${esc(p.HealthRight)}</span>` : ''}</div></div>
+      ${p.ChronicDiseases ? `<div class="alert alert-info"><i data-lucide="clipboard-list"></i><div>โรคประจำตัว: ${esc(p.ChronicDiseases)}</div></div>` : ''}
+      ${d.sections.map(sec => { const s = sc(sec.sheet); const df = main.find(k => s && s.fields.some(f => f.k === k)); const cols = s ? s.fields.filter(f => f.list && !['PersonID', 'VillageNo', s.idField, df].includes(f.k)).slice(0, 4) : [];
+        return `<details class="timeline-sec" ${sec.total ? 'open' : ''}><summary><span style="display:flex;gap:8px;align-items:center"><i data-lucide="${s ? s.icon : 'file'}"></i>${esc(sec.title)}</span><span class="tag">${sec.total} รายการ</span></summary>${sec.total ? `<div class="table-wrap" style="border:0;border-radius:0"><table class="dtable"><thead><tr><th>วันที่</th>${cols.map(c => `<th>${esc(c.l)}</th>`).join('')}</tr></thead><tbody>${sec.rows.map(r => `<tr><td>${fmtDate(r[df])}</td>${cols.map(c => `<td>${cellHTML(c, r)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '<div class="muted" style="padding:12px 14px">ยังไม่มีข้อมูล</div>'}</details>`; }).join('')}
+      ${d.history.length ? `<details class="timeline-sec"><summary><span style="display:flex;gap:8px;align-items:center"><i data-lucide="history"></i>ประวัติการแก้ไขข้อมูล</span><span class="tag">${d.history.length}</span></summary><div style="padding:8px 14px">${d.history.map(h => `<div style="padding:6px 0;border-bottom:1px dashed var(--line-2);font-size:.85rem">${fmtDT(h.time)} · <b>${esc(h.user)}</b> · ${esc(h.action)} · ${esc(h.sheet)} ${esc(h.recordId)}</div>`).join('')}</div></details>` : ''}`;
+    if ($('[data-modal="profile"] .modal-body')) { $('[data-modal="profile"] .modal-body').innerHTML = body; icons(); }
+  } catch (e) { if ($('[data-modal="profile"] .modal-body')) { $('[data-modal="profile"] .modal-body').innerHTML = stateBox('error', 'ไม่สามารถโหลดประวัติได้', e.message); icons(); } }
+}
+
+/* ---------- export ---------- */
+function downloadRows(columns, rows, filename, fmt) {
+  const aoa = [columns.map(c => c.l)].concat(rows.map(r => columns.map(c => { const v = r[c.k]; return v === undefined || v === null ? '' : (typeof v === 'boolean' ? (v ? 'ใช่' : 'ไม่ใช่') : v); })));
+  if (fmt === 'csv') {
+    const csv = aoa.map(line => line.map(v => { let s = String(v); if (/^[=+\-@]/.test(s)) s = "'" + s; return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(',')).join('\r\n');
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename + '.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    return;
+  }
+  if (!window.XLSX) return toast('ไม่สามารถโหลด SheetJS ได้ (ตรวจสอบอินเทอร์เน็ต)', 'error');
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'DATA');
+  XLSX.writeFile(wb, filename + '.xlsx');
+}
+async function exportModule(fmt) {
+  const st = modState(App.view);
+  try {
+    const d = await api('exportData', Object.assign(modPayload(st), { format: fmt }), { timeout: 120000 });
+    if (!d.rows.length) return toast('ไม่มีข้อมูลสำหรับส่งออก', 'warn');
+    downloadRows(d.columns, d.rows, `${d.title}_${todayISO()}`, fmt);
+    toast(`ส่งออก ${fmtNum(d.rows.length)} รายการ (บันทึกใน Audit Log)`);
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+/* =====================================================================
+ *  EXCEL IMPORT CENTER
+ * =================================================================== */
+function importFields(sheet) {
+  const s = sc(sheet);
+  const list = s.fields.filter(f => !(f.imp === 0) && !(f.ro && f.imp !== 1) && !['CreatedAt', 'UpdatedAt', 'UpdatedBy'].includes(f.k));
+  if ((s.person || s.personOptional) && !list.some(f => f.k === 'CID')) list.splice(1, 0, { k: 'CID', l: 'เลขประจำตัวประชาชน (ใช้เชื่อมโยงบุคคลแทน PersonID)', t: 'cid', al: ['เลขบัตรประชาชน', 'เลขประจำตัวประชาชน', 'cid'] });
+  return list;
+}
+const normH = s => String(s || '').toLowerCase().replace(/[\s_\-.()\/:]/g, '');
+function autoMap(headers, fields) {
+  const map = {};
+  headers.forEach((h, i) => {
+    const m = String(h).match(/\[([A-Za-z0-9_]+)\]/);
+    let f = m ? fields.find(x => x.k === m[1]) : null;
+    if (!f) { const n = normH(h); f = fields.find(x => normH(x.k) === n || normH(x.l) === n || (x.al || []).some(a => normH(a) === n)); }
+    if (f && !Object.values(map).includes(f.k)) map[i] = f.k;
+  });
+  return map;
+}
+function renderImport() {
+  const imp = App.imp || (App.imp = { sheet: '' });
+  const importable = Object.keys(App.boot.schema).filter(k => sc(k).importable);
+  $('#view').innerHTML = `
+  <div class="page-head"><div><h1><span class="ph-icon"><i data-lucide="file-spreadsheet"></i></span>Excel Import Center</h1><p>นำเข้าข้อมูลแบบ Upsert (ใหม่ = เพิ่ม, มีอยู่ = อัปเดต) · ไม่ลบข้อมูลเดิม · ตรวจสอบก่อนบันทึกทุกครั้ง</p></div>
+  <div class="head-actions"><button class="btn btn-outline" data-act="imp-history"><i data-lucide="history"></i> ประวัติการนำเข้า</button></div></div>
+  <div class="steps">
+    <div class="card step"><div class="card-title"><h3><span class="step-num">1</span> เลือกประเภทข้อมูลและดาวน์โหลด Template</h3></div>
+      <div class="toolbar"><div class="field" style="flex:2 1 260px"><label>ประเภทข้อมูล (ตารางปลายทาง)</label><select class="input" id="impSheet">${opts(importable.map(k => [k, sc(k).title + ' (' + k + ')']), imp.sheet, '— เลือกประเภทข้อมูล —')}</select></div>
+      <div><button class="btn btn-outline" data-act="imp-template"><i data-lucide="download"></i> ดาวน์โหลด Template</button></div></div>
+      <div class="muted" style="font-size:.82rem;margin-top:10px">Primary Key: ใช้รหัสของตาราง (เช่น PersonID) ถ้าไม่มีระบบจะตรวจซ้ำด้วยเลขประจำตัวประชาชน (แฮชฝั่งเซิร์ฟเวอร์) หรือคีย์ธรรมชาติของตาราง · วันที่รองรับ วว/ดด/ปปปป (พ.ศ./ค.ศ.), ปปปป-ดด-วว และวันที่ของ Excel</div>
+    </div>
+    <div class="card step ${imp.sheet ? '' : 'disabled'}" id="impStep2"><div class="card-title"><h3><span class="step-num">2</span> เลือกไฟล์ Excel (.xlsx / .xls)</h3><small>ไม่เกิน ${App.boot.maxImportMB} MB · ${fmtNum(App.boot.maxImportRows)} แถว</small></div>
+      <label class="dropzone" id="dropzone"><input type="file" id="impFile" accept=".xlsx,.xls" hidden><i data-lucide="cloud-upload"></i><div style="margin-top:8px"><b>ลากไฟล์มาวาง หรือแตะเพื่อเลือกไฟล์</b></div><div class="muted" style="font-size:.85rem">ระบบอ่านไฟล์ในเบราว์เซอร์ด้วย SheetJS ก่อนส่งเฉพาะคอลัมน์ที่จับคู่ไปยังเซิร์ฟเวอร์</div></label>
+      <div id="impFileInfo" style="margin-top:12px"></div>
+    </div>
+    <div class="card step disabled" id="impStep3"><div class="card-title"><h3><span class="step-num">3</span> ตรวจสอบหัวตารางและจับคู่คอลัมน์ (Mapping)</h3></div><div id="impMapping" class="muted">รอเลือกไฟล์</div></div>
+    <div class="card step disabled" id="impStep4"><div class="card-title"><h3><span class="step-num">4</span> ตรวจสอบข้อมูลและแสดงตัวอย่างก่อนบันทึก</h3></div><div id="impPreview" class="muted">รอจับคู่คอลัมน์</div></div>
+    <div class="card step disabled" id="impStep5"><div class="card-title"><h3><span class="step-num">5</span> ยืนยันการนำเข้าและผลลัพธ์</h3></div><div id="impResult" class="muted">รอการตรวจสอบข้อมูล</div></div>
+  </div>`;
+  icons();
+  $('#impSheet').onchange = e => { App.imp = { sheet: e.target.value }; renderImport(); };
+  const fileInput = $('#impFile'), dz = $('#dropzone');
+  fileInput.onchange = () => fileInput.files[0] && readImportFile(fileInput.files[0]);
+  dz.ondragover = e => { e.preventDefault(); dz.classList.add('drag'); };
+  dz.ondragleave = () => dz.classList.remove('drag');
+  dz.ondrop = e => { e.preventDefault(); dz.classList.remove('drag'); if (e.dataTransfer.files[0]) readImportFile(e.dataTransfer.files[0]); };
+}
+function sampleValue(f, i) {
+  const ex = { FirstName: ['ตัวอย่าง', 'ทดลอง'], LastName: ['สมมติ', 'ข้อมูลปลอม'], HouseNo: ['99/1', '100'], Phone: ['0800000001', '0800000002'], CID: [fakeCID(1), fakeCID(2)], PersonID: ['P000001', 'P000002'] };
+  if (ex[f.k]) return ex[f.k][i];
+  if (f.t === 'date') return i ? '2510-03-15' : '15/03/2510';
+  if (f.t === 'village') return i + 1;
+  if (f.t === 'select') return (f.o || [])[i] || (f.o || [])[0] || '';
+  if (f.t === 'int' || f.t === 'number') return f.min !== undefined ? Math.max(f.min, Math.min(f.max || 100, Math.round(((f.min || 0) + (f.max || 100)) / 3))) : 1;
+  if (f.t === 'time') return '09:30';
+  if (f.t === 'id') return '';
+  if (f.t === 'ref') return '';
+  return 'ข้อความตัวอย่าง';
+}
+function fakeCID(n) { const p = '0' + String(10000000000 + n).slice(-11); let s = 0; for (let i = 0; i < 12; i++) s += +p[i] * (13 - i); return p + ((11 - (s % 11)) % 10); }
+function downloadTemplate() {
+  const sheet = App.imp && App.imp.sheet; if (!sheet) return toast('กรุณาเลือกประเภทข้อมูลก่อน', 'warn');
+  if (!window.XLSX) return toast('ไม่สามารถโหลด SheetJS ได้', 'error');
+  const fields = importFields(sheet), s = sc(sheet);
+  const head = fields.map(f => `${f.l} [${f.k}]`);
+  const typeName = { text: 'ข้อความ', textarea: 'ข้อความยาว', int: 'จำนวนเต็ม', number: 'ตัวเลข', date: 'วันที่ (วว/ดด/ปปปป พ.ศ./ค.ศ. หรือ ปปปป-ดด-วว)', time: 'เวลา HH:mm', select: 'ตัวเลือก', village: 'หมู่ที่ 1–12', person: 'รหัสบุคคล', phone: 'เบอร์โทร 10 หลัก', ref: 'รหัสอ้างอิง', cid: 'เลข 13 หลัก', id: 'รหัส (เว้นว่าง = สร้างใหม่)', bool: 'ใช่/ไม่ใช่' };
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([head]);
+  ws['!cols'] = head.map(h => ({ wch: Math.min(Math.max(h.length + 2, 12), 40) }));
+  XLSX.utils.book_append_sheet(wb, ws, 'DATA');
+  const info = [['คอลัมน์ (Key)', 'ชื่อ', 'ประเภทข้อมูล', 'จำเป็น', 'ตัวเลือก/ช่วงค่า', 'หมายเหตุ']].concat(fields.map(f => [f.k, f.l, typeName[f.t] || f.t, f.req ? 'จำเป็น' : '', f.o ? f.o.join(' | ') : (f.min !== undefined ? `${f.min}–${f.max}` : ''), f.k === s.idField ? 'Primary Key: มีค่า = อัปเดตรายการเดิม, เว้นว่าง = สร้างใหม่/ตรวจซ้ำอัตโนมัติ' : (f.k === 'CID' ? 'ตรวจ checksum; ระบบเก็บเฉพาะค่าแฮชและค่าปกปิด' : (f.ro ? 'ใช้ตรวจสอบเท่านั้น ระบบคำนวณใหม่' : ''))]));
+  info.push([], ['วิธีใช้', 'กรอกข้อมูลในชีต DATA (แถวที่ 1 เป็นหัวตาราง ห้ามแก้ไขส่วน [Key]) แล้วนำเข้าที่เมนู Excel Import Center']);
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(info), 'คำอธิบาย');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([head, fields.map(f => sampleValue(f, 0)), fields.map(f => sampleValue(f, 1))]), 'ตัวอย่าง (ข้อมูลสมมติ)');
+  XLSX.writeFile(wb, `Template_${sheet}.xlsx`);
+}
+async function readImportFile(file) {
+  const info = $('#impFileInfo');
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  if (!['xlsx', 'xls'].includes(ext)) { info.innerHTML = '<div class="alert alert-error"><i data-lucide="x-circle"></i>รองรับเฉพาะไฟล์ .xlsx และ .xls</div>'; icons(); return; }
+  if (file.size > App.boot.maxImportMB * 1024 * 1024) { info.innerHTML = `<div class="alert alert-error"><i data-lucide="x-circle"></i>ไฟล์ใหญ่เกิน ${App.boot.maxImportMB} MB</div>`; icons(); return; }
+  if (!window.XLSX) { info.innerHTML = '<div class="alert alert-error">ไม่สามารถโหลด SheetJS ได้ (ตรวจสอบอินเทอร์เน็ต)</div>'; return; }
+  info.innerHTML = stateBox('loading', 'กำลังอ่านไฟล์...');
+  try {
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array', cellDates: false });
+    App.imp.file = file.name; App.imp.wb = wb;
+    App.imp.wsName = wb.SheetNames.includes('DATA') ? 'DATA' : wb.SheetNames[0];
+    loadWorksheet();
+  } catch (e) { info.innerHTML = `<div class="alert alert-error"><i data-lucide="x-circle"></i>อ่านไฟล์ไม่สำเร็จ: ${esc(e.message)}</div>`; icons(); }
+}
+function loadWorksheet() {
+  const imp = App.imp, ws = imp.wb.Sheets[imp.wsName];
+  const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '', blankrows: false });
+  imp.headers = (aoa[0] || []).map(h => String(h).trim());
+  imp.data = aoa.slice(1).map((r, i) => ({ r, row: i + 2 })).filter(x => x.r.some(v => String(v).trim() !== ''));
+  const tooMany = imp.data.length > App.boot.maxImportRows;
+  $('#impFileInfo').innerHTML = `<div class="alert ${tooMany || !imp.data.length ? 'alert-error' : 'alert-ok'}"><i data-lucide="file-spreadsheet"></i><div><b>${esc(imp.file)}</b> · ชีต ${imp.wb.SheetNames.length > 1 ? `<select class="input" id="impWs" style="display:inline-block;width:auto;min-height:32px;padding:2px 8px">${imp.wb.SheetNames.map(n => `<option ${n === imp.wsName ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>` : esc(imp.wsName)} · <b>${fmtNum(imp.data.length)}</b> แถวข้อมูล · ${imp.headers.length} คอลัมน์${tooMany ? ` — เกินขีดจำกัด ${fmtNum(App.boot.maxImportRows)} แถว กรุณาแบ่งไฟล์` : ''}${!imp.data.length ? ' — ไม่พบข้อมูล' : ''}</div></div>`;
+  icons();
+  const wsSel = $('#impWs'); if (wsSel) wsSel.onchange = e => { imp.wsName = e.target.value; loadWorksheet(); };
+  if (tooMany || !imp.data.length) return;
+  imp.fields = importFields(imp.sheet);
+  imp.map = autoMap(imp.headers, imp.fields);
+  $('#impStep3').classList.remove('disabled');
+  renderMapping();
+}
+function renderMapping() {
+  const imp = App.imp, s = sc(imp.sheet);
+  const mapped = Object.values(imp.map);
+  const reqMissing = imp.fields.filter(f => f.req && !(s.person && f.k === 'VillageNo') && !mapped.includes(f.k) && !(f.k === 'PersonID' && mapped.includes('CID')));
+  $('#impMapping').innerHTML = `
+    ${reqMissing.length ? `<div class="alert alert-warn"><i data-lucide="alert-triangle"></i><div>ยังไม่ได้จับคู่คอลัมน์จำเป็น: <b>${reqMissing.map(f => esc(f.l)).join(', ')}</b> — แถวที่เป็นข้อมูลใหม่จะไม่ผ่านการตรวจสอบ (การอัปเดตรายการเดิมด้วยรหัสยังทำได้)</div></div>` : '<div class="alert alert-ok"><i data-lucide="check-circle-2"></i>หัวตารางครบตามคอลัมน์จำเป็น</div>'}
+    <div class="table-wrap"><table class="dtable"><thead><tr><th>#</th><th>หัวคอลัมน์ใน Excel</th><th>ตัวอย่างค่า</th><th>จับคู่กับฟิลด์ในระบบ</th></tr></thead><tbody>
+    ${imp.headers.map((h, i) => `<tr><td>${i + 1}</td><td>${esc(h) || '<span class="muted">(ว่าง)</span>'}</td><td class="muted">${esc(String(imp.data[0] ? imp.data[0].r[i] : '').slice(0, 30))}</td><td><select class="input" data-map="${i}" style="min-height:38px">${opts(imp.fields.map(f => [f.k, f.l + (f.req ? ' *' : '') + ' [' + f.k + ']']), imp.map[i] || '', '— ไม่นำเข้า —')}</select></td></tr>`).join('')}
+    </tbody></table></div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn btn-primary" data-act="imp-validate"><i data-lucide="shield-check"></i> ตรวจสอบข้อมูล</button><span class="muted" style="font-size:.84rem;align-self:center">จับคู่แล้ว ${mapped.length}/${imp.headers.length} คอลัมน์</span></div>`;
+  icons();
+}
+function buildImportRecords() {
+  const imp = App.imp, s = sc(imp.sheet);
+  const fmap = {}; imp.fields.forEach(f => fmap[f.k] = f);
+  const issues = {};
+  const seen = {};
+  const recs = imp.data.map(({ r, row }) => {
+    const o = { _row: row };
+    const notes = [];
+    Object.entries(imp.map).forEach(([ci, k]) => {
+      let v = r[ci];
+      if (typeof v === 'string') v = v.trim();
+      const f = fmap[k];
+      if (v !== '' && f) {
+        if (f.t === 'date') { const d = parseDateC(v); if (d === null) notes.push(`${f.l}: วันที่ไม่ถูกต้อง (${String(v).slice(0, 15)})`); else v = d; }
+        else if (f.t === 'village') { const n = Number(String(v).replace(/^หมู่(ที่)?\s*/, '')); if (!(n >= 1 && n <= App.boot.villageCount && Number.isInteger(n))) notes.push(`${f.l}: ต้องเป็น 1–${App.boot.villageCount}`); }
+        else if (f.t === 'cid') { v = String(v).replace(/[^\d]/g, ''); if (!validCID(v)) notes.push('เลขประจำตัวประชาชนไม่ถูกต้อง'); }
+        else if (typeof v === 'number' && ['text', 'phone', 'id', 'person', 'ref'].includes(f.t)) v = String(v);
+      }
+      o[k] = v;
+    });
+    imp.fields.forEach(f => { if (f.req && f.k !== s.idField && !(s.person && f.k === 'VillageNo') && (o[f.k] === undefined || o[f.k] === '') && !o[s.idField] && !(f.k === 'PersonID' && o.CID)) notes.push(`${f.l}: ไม่มีข้อมูล`); });
+    const key = o[s.idField] ? 'I:' + o[s.idField] : o.CID && imp.sheet === 'POPULATION' ? 'C:' + o.CID : (s.dedupe && s.dedupe.length && s.dedupe.every(k => o[k] !== undefined && o[k] !== '')) ? 'K:' + s.dedupe.map(k => String(o[k]).toLowerCase()).join('|') : imp.sheet === 'POPULATION' && o.FirstName && o.LastName && o.BirthDate ? 'N:' + [o.FirstName, o.LastName, o.BirthDate].join('|').toLowerCase() : '';
+    if (key) { if (seen[key]) notes.push(`ข้อมูลซ้ำในไฟล์ (ซ้ำกับแถว ${seen[key]})`); else seen[key] = row; }
+    if (notes.length) issues[row] = notes;
+    return o;
+  });
+  return { recs, issues };
+}
+async function validateImport() {
+  const imp = App.imp;
+  $$('[data-map]').forEach(sel => { if (sel.value) imp.map[sel.dataset.map] = sel.value; else delete imp.map[sel.dataset.map]; });
+  const dup = Object.values(imp.map).filter((k, i, a) => a.indexOf(k) !== i);
+  if (dup.length) return toast('จับคู่ฟิลด์ซ้ำ: ' + [...new Set(dup)].join(', '), 'error');
+  if (!Object.keys(imp.map).length) return toast('กรุณาจับคู่อย่างน้อย 1 คอลัมน์', 'warn');
+  const { recs, issues } = buildImportRecords();
+  imp.recs = recs; imp.clientIssues = issues;
+  $('#impStep4').classList.remove('disabled');
+  const prev = $('#impPreview');
+  const chunk = App.boot.importChunk, n = Math.ceil(recs.length / chunk);
+  prev.innerHTML = `<div class="muted" style="margin-bottom:8px">ตรวจสอบกับฐานข้อมูล (ไม่บันทึก)...</div><div class="progress"><div id="valBar" style="width:0"></div></div>`;
+  const results = [];
+  try {
+    for (let i = 0; i < n; i++) {
+      const d = await api('validateImportData', { sheet: imp.sheet, rows: recs.slice(i * chunk, (i + 1) * chunk) }, { timeout: CFG.importTimeout });
+      results.push(...d.results);
+      const bar = $('#valBar'); if (bar) bar.style.width = ((i + 1) / n * 100) + '%';
+    }
+  } catch (e) { prev.innerHTML = `<div class="alert alert-error"><i data-lucide="x-circle"></i><div>ตรวจสอบไม่สำเร็จ: ${esc(e.message)}</div></div>`; icons(); return; }
+  // merge client issues (duplicates across chunks etc.)
+  results.forEach(r => { const ci = issues[r.row]; if (ci && r.action !== 'error') { const dupNote = ci.find(x => x.startsWith('ข้อมูลซ้ำในไฟล์')); if (dupNote) { r.action = 'skip'; r.message = dupNote; } } });
+  imp.dry = results;
+  renderPreview();
+}
+function renderPreview(filter = 'all') {
+  const imp = App.imp, res = imp.dry;
+  const c = { insert: 0, update: 0, skip: 0, error: 0 }; res.forEach(r => c[r.action]++);
+  const label = { insert: ['เพิ่มใหม่', 'st-good'], update: ['อัปเดต', 'st-info'], skip: ['ข้าม', 'st-warn'], error: ['ผิดพลาด', 'st-critical'] };
+  const fields = Object.values(imp.map).slice(0, 6);
+  const fl = k => (imp.fields.find(f => f.k === k) || {}).l || k;
+  const byRow = {}; imp.recs.forEach(r => byRow[r._row] = r);
+  const show = res.filter(r => filter === 'all' || r.action === filter).slice(0, 200);
+  $('#impPreview').innerHTML = `
+    <div class="stat-tiles mb"><div class="stat-tile"><b>${fmtNum(res.length)}</b><span>ทั้งหมด</span></div><div class="stat-tile"><b style="color:#076b07">${fmtNum(c.insert)}</b><span>ข้อมูลใหม่</span></div><div class="stat-tile"><b style="color:#1e40af">${fmtNum(c.update)}</b><span>อัปเดตข้อมูลเดิม</span></div><div class="stat-tile"><b style="color:#8a5a00">${fmtNum(c.skip)}</b><span>ข้าม</span></div><div class="stat-tile"><b style="color:#a32626">${fmtNum(c.error)}</b><span>ผิดพลาด</span></div></div>
+    <div class="chips mb">${['all', 'insert', 'update', 'skip', 'error'].map(k => `<button class="chip ${filter === k ? 'active' : ''}" data-act="imp-pfilter" data-f="${k}">${k === 'all' ? 'ทั้งหมด' : label[k][0]}</button>`).join('')}</div>
+    <div class="table-wrap" style="max-height:420px;overflow:auto"><table class="dtable"><thead><tr><th>แถว</th><th>ผล</th><th>รายละเอียด</th>${fields.map(k => `<th>${esc(fl(k))}</th>`).join('')}</tr></thead><tbody>
+    ${show.map(r => `<tr><td>${r.row}</td><td><span class="status ${label[r.action][1]}">${label[r.action][0]}</span></td><td style="min-width:220px">${esc(r.message || (r.matchedBy ? 'ตรงกับรายการเดิม (' + r.matchedBy + ') ' + (r.id || '') : ''))}</td>${fields.map(k => `<td>${esc(String(byRow[r.row] && byRow[r.row][k] !== undefined ? byRow[r.row][k] : '').slice(0, 30))}</td>`).join('')}</tr>`).join('')}
+    </tbody></table></div>${res.length > 200 ? '<div class="muted" style="font-size:.82rem;margin-top:6px">แสดง 200 แถวแรกของตัวกรองนี้</div>' : ''}
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">${c.error + c.skip ? '<button class="btn btn-outline" data-act="imp-errors" data-src="dry"><i data-lucide="file-warning"></i> ดาวน์โหลดรายงานข้อผิดพลาด (Excel)</button>' : ''}</div>`;
+  $('#impStep5').classList.remove('disabled');
+  $('#impResult').innerHTML = c.insert + c.update ? `<div class="alert alert-info"><i data-lucide="info"></i><div>จะบันทึก <b>${fmtNum(c.insert)}</b> รายการใหม่ และอัปเดต <b>${fmtNum(c.update)}</b> รายการ (แถวที่ผิดพลาด/ข้ามจะไม่ถูกบันทึก) · ระบบใช้ Script Lock และเขียนแบบ Batch ครั้งละ ${App.boot.importChunk} แถว</div></div><button class="btn btn-primary" data-act="imp-commit"><i data-lucide="upload"></i> ยืนยันนำเข้า ${fmtNum(c.insert + c.update)} รายการ</button>` : '<div class="alert alert-warn"><i data-lucide="alert-triangle"></i>ไม่มีแถวที่สามารถนำเข้าได้ กรุณาแก้ไขไฟล์แล้วลองใหม่</div>';
+  icons();
+}
+async function commitImport() {
+  const imp = App.imp;
+  const okRows = new Set(imp.dry.filter(r => r.action === 'insert' || r.action === 'update').map(r => r.row));
+  const recs = imp.recs.filter(r => okRows.has(r._row));
+  const ok = await confirmBox('<i data-lucide="upload"></i> ยืนยันการนำเข้า', `นำเข้า <b>${fmtNum(recs.length)}</b> แถว ไปยัง <b>${esc(sc(imp.sheet).title)}</b> จากไฟล์ ${esc(imp.file)}?<br><small class="muted">ข้อมูลเดิมจะไม่ถูกลบ ค่าว่างในไฟล์จะไม่ทับค่าเดิม</small>`, 'นำเข้า');
+  if (!ok) return;
+  const chunk = App.boot.importChunk, n = Math.ceil(recs.length / chunk);
+  const jobId = 'IMP' + Date.now().toString(36).toUpperCase();
+  const box = $('#impResult');
+  box.innerHTML = `<div class="muted" style="margin-bottom:8px" id="impProgTxt">กำลังนำเข้า ชุดที่ 0/${n}</div><div class="progress"><div id="impBar" style="width:0"></div></div>`;
+  const results = []; let last = null;
+  try {
+    for (let i = 0; i < n; i++) {
+      const d = await api('importExcelData', { sheet: imp.sheet, rows: recs.slice(i * chunk, (i + 1) * chunk), jobId, chunkNo: i + 1, totalChunks: n, fileName: imp.file }, { timeout: CFG.importTimeout });
+      results.push(...d.results); last = d;
+      $('#impBar').style.width = ((i + 1) / n * 100) + '%'; $('#impProgTxt').textContent = `กำลังนำเข้า ชุดที่ ${i + 1}/${n}`;
+    }
+  } catch (e) {
+    toast('นำเข้าไม่สำเร็จ: ' + e.message, 'error', 8000);
+    box.innerHTML = `<div class="alert alert-error"><i data-lucide="x-circle"></i><div>นำเข้าหยุดที่ชุดที่ ${Math.floor(results.length / chunk) + 1}/${n}: ${esc(e.message)}<br>ชุดก่อนหน้าบันทึกแล้ว (${fmtNum(results.length)} แถว) — สามารถนำเข้าไฟล์เดิมซ้ำได้อย่างปลอดภัย ระบบจะอัปเดตแทนการสร้างซ้ำ</div></div>`;
+    icons(); return;
+  }
+  // include client-side skipped/error rows for full summary
+  const skipped = imp.dry.filter(r => !okRows.has(r.row));
+  const all = results.concat(skipped).sort((a, b) => a.row - b.row);
+  imp.final = all;
+  const c = { insert: 0, update: 0, skip: 0, error: 0 }; all.forEach(r => c[r.action]++);
+  box.innerHTML = `<div class="alert ${c.error ? 'alert-warn' : 'alert-ok'}"><i data-lucide="${c.error ? 'alert-triangle' : 'check-circle-2'}"></i><div><b>นำเข้าเสร็จสิ้น</b> · ${fmtDT(last && last.lastImportAt)} · รหัสงาน ${jobId}</div></div>
+    <div class="stat-tiles mb"><div class="stat-tile"><b>${fmtNum(all.length)}</b><span>ข้อมูลทั้งหมด</span></div><div class="stat-tile"><b style="color:#076b07">${fmtNum(c.insert)}</b><span>ข้อมูลใหม่</span></div><div class="stat-tile"><b style="color:#1e40af">${fmtNum(c.update)}</b><span>อัปเดต</span></div><div class="stat-tile"><b style="color:#8a5a00">${fmtNum(c.skip)}</b><span>ข้าม</span></div><div class="stat-tile"><b style="color:#a32626">${fmtNum(c.error)}</b><span>ผิดพลาด</span></div></div>
+    ${c.error + c.skip ? `<div class="table-wrap mb" style="max-height:300px;overflow:auto"><table class="dtable"><thead><tr><th>แถว</th><th>ผล</th><th>สาเหตุ</th></tr></thead><tbody>${all.filter(r => r.action === 'error' || r.action === 'skip').slice(0, 300).map(r => `<tr><td>${r.row}</td><td>${statusBadge(r.action === 'error' ? 'ผิดพลาด' : 'ข้าม')}</td><td>${esc(r.message)}</td></tr>`).join('')}</tbody></table></div><button class="btn btn-outline" data-act="imp-errors" data-src="final"><i data-lucide="file-warning"></i> ดาวน์โหลดรายงานข้อผิดพลาด (Excel)</button>` : ''}
+    <button class="btn btn-primary" data-act="nav" data-view="dashboard"><i data-lucide="layout-dashboard"></i> ดู Dashboard</button>`;
+  icons();
+  toast(`นำเข้าสำเร็จ: ใหม่ ${fmtNum(c.insert)} · อัปเดต ${fmtNum(c.update)}${c.error ? ' · ผิดพลาด ' + fmtNum(c.error) : ''}`, c.error ? 'warn' : 'ok', 7000);
+  App.dashStale = true;
+  if (last && last.lastImportAt) { App.boot.settings.lastImportAt = last.lastImportAt; const el = $('#sbLastImport'); if (el) el.textContent = fmtDT(last.lastImportAt); }
+  refreshBootLists();
+  loadDashboardInBackground();
+  loadNotifications(true);
+}
+async function loadDashboardInBackground() { try { App.lastData.dash = await api('getDashboardData', { filters: App.dashFilters, noCache: true }, { silent: true }); App.dashStale = false; } catch (e) {} }
+function downloadImportErrors(src) {
+  const imp = App.imp, list = (src === 'final' ? imp.final : imp.dry) || [];
+  const byRow = {}; imp.recs.forEach(r => byRow[r._row] = r);
+  const rawByRow = {}; imp.data.forEach(d => rawByRow[d.row] = d.r);
+  const rows = list.filter(r => r.action === 'error' || r.action === 'skip').map(r => { const o = { 'แถวใน Excel': r.row, 'ผล': r.action === 'error' ? 'ผิดพลาด' : 'ข้าม', 'สาเหตุ': r.message, 'รหัส': r.id || '' }; imp.headers.forEach((h, i) => o[h || ('คอลัมน์' + (i + 1))] = (rawByRow[r.row] || [])[i]); return o; });
+  if (!rows.length) return toast('ไม่มีข้อผิดพลาด', 'info');
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'ERRORS');
+  XLSX.writeFile(wb, `Import_Errors_${imp.sheet}_${todayISO()}.xlsx`);
+}
+async function showImportHistory() {
+  openModal({ id: 'hist', size: 'lg', title: '<i data-lucide="history"></i> ประวัติการนำเข้า (Import Log)', body: stateBox('loading') });
+  try {
+    const d = await api('getImportHistory', { limit: 100 });
+    $('[data-modal="hist"] .modal-body').innerHTML = d.rows.length ? `<div class="table-wrap"><table class="dtable"><thead><tr><th>เวลา</th><th>ผู้นำเข้า</th><th>ตาราง</th><th>ไฟล์</th><th class="num">ทั้งหมด</th><th class="num">ใหม่</th><th class="num">อัปเดต</th><th class="num">ข้าม</th><th class="num">ผิดพลาด</th></tr></thead><tbody>${d.rows.map(r => `<tr><td>${fmtDT(r.timestamp)}</td><td>${esc(r.username)}</td><td>${esc(r.sheetTitle)}</td><td>${esc(r.fileName)}</td><td class="num">${fmtNum(r.total)}</td><td class="num">${fmtNum(r.inserted)}</td><td class="num">${fmtNum(r.updated)}</td><td class="num">${fmtNum(r.skipped)}</td><td class="num">${fmtNum(r.errors)}</td></tr>`).join('')}</tbody></table></div>` : stateBox('empty', 'ยังไม่มีประวัติการนำเข้า', '');
+    icons();
+  } catch (e) { $('[data-modal="hist"] .modal-body').innerHTML = stateBox('error', 'โหลดไม่สำเร็จ', e.message); icons(); }
+}
+
+/* =====================================================================
+ *  REPORTS
+ * =================================================================== */
+const REPORT_TYPES = [['village', 'รายงานรายหมู่บ้าน', 'map'], ['center', 'รายงานราย ศสมช.', 'building-2'], ['volunteer', 'รายงานราย อสม.', 'users'], ['population', 'รายงานประชากร', 'contact'], ['service', 'รายงานบริการ', 'stethoscope'], ['ncd', 'รายงาน NCD', 'heart-pulse'], ['homevisit', 'รายงานเยี่ยมบ้าน', 'door-open'], ['screening', 'รายงานผลการคัดกรอง', 'activity']];
+function renderReports() {
+  const st = App.rep || (App.rep = { type: 'village', fiscalYear: currentFY(), year: '', month: '', villages: [] });
+  $('#view').innerHTML = `
+  <div class="page-head"><div><h1><span class="ph-icon"><i data-lucide="file-bar-chart"></i></span>รายงานและการส่งออก</h1><p>ทุกรายงานกรองตามสิทธิ์ผู้ใช้และบันทึกใน Audit Log</p></div></div>
+  <div class="card filter-card no-print">
+    <div class="chips mb">${REPORT_TYPES.map(r => `<button class="chip ${st.type === r[0] ? 'active' : ''}" data-act="rep-type" data-t="${r[0]}"><i data-lucide="${r[2]}" style="width:14px;height:14px;vertical-align:-2px"></i> ${r[1]}</button>`).join('')}</div>
+    <div class="toolbar">
+      <div class="field"><label>ปีงบประมาณ</label><select class="input" data-rf="fiscalYear">${yearOptions(st.fiscalYear, true)}</select></div>
+      <div class="field"><label>ปีปฏิทิน</label><select class="input" data-rf="year">${yearOptions(st.year, false)}</select></div>
+      <div class="field"><label>เดือน</label><select class="input" data-rf="month">${monthOptions(st.month)}</select></div>
+      ${App.boot.villages.length > 1 ? `<div class="field"><label>หมู่บ้าน</label>${villageSelect(st.villages, 'rep')}</div>` : ''}
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-primary" data-act="rep-run"><i data-lucide="play"></i> สร้างรายงาน</button></div>
+    </div>
+  </div>
+  <div class="card" id="repOut">${stateBox('empty', 'เลือกประเภทรายงานแล้วกด "สร้างรายงาน"', '')}</div>`;
+  icons();
+}
+function repFilters() { const st = App.rep; return { fiscalYear: st.fiscalYear, year: st.year, month: st.month, villages: st.villages }; }
+function filterLabel(f) { const t = []; if (f.fiscalYear) t.push('ปีงบประมาณ ' + f.fiscalYear); if (f.year) t.push('ปี ' + f.year); if (f.month) t.push('เดือน' + TH_MONTHS_FULL[f.month - 1]); t.push(f.villages && f.villages.length ? 'หมู่ ' + f.villages.join(', ') : 'ทุกหมู่บ้านตามสิทธิ์'); return t.join(' · '); }
+async function runReport() {
+  const out = $('#repOut'); out.innerHTML = stateBox('loading', 'กำลังสร้างรายงาน...');
+  try {
+    const d = await api('getReport', { type: App.rep.type, filters: repFilters() }, { timeout: 90000 });
+    App.lastData.report = d;
+    out.innerHTML = `<div class="card-title"><div><h3><i data-lucide="file-text"></i> ${esc(d.title)}</h3><small>${esc(filterLabel(repFilters()))} · สร้างเมื่อ ${fmtDT(d.generatedAt)} โดย ${esc(d.generatedBy)}</small></div>
+      <div class="head-actions no-print"><button class="btn btn-outline btn-sm" data-act="rep-export" data-fmt="xlsx"><i data-lucide="file-down"></i> Excel</button><button class="btn btn-outline btn-sm" data-act="rep-export" data-fmt="csv"><i data-lucide="file-text"></i> CSV</button><button class="btn btn-outline btn-sm" data-act="rep-print"><i data-lucide="printer"></i> พิมพ์</button></div></div>
+      ${d.rows.length ? reportTable(d) : stateBox('empty', 'ไม่มีข้อมูลตามเงื่อนไข', '')}`;
+    icons();
+  } catch (e) { out.innerHTML = stateBox('error', 'สร้างรายงานไม่สำเร็จ', e.message, 'rep-run'); icons(); }
+}
+function reportTable(d) { return `<div class="table-wrap"><table class="dtable"><thead><tr>${d.columns.map(c => `<th>${esc(c.l)}</th>`).join('')}</tr></thead><tbody>${d.rows.map(r => `<tr class="${r._total ? 'total' : ''}">${d.columns.map(c => `<td class="${typeof r[c.k] === 'number' ? 'num' : ''}">${typeof r[c.k] === 'number' ? fmtNum(r[c.k]) : esc(r[c.k])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
+function printHTML(title, inner) {
+  const b = App.boot;
+  $('#printArea').innerHTML = `<div class="print-doc"><h1>${esc(title)}</h1><div class="meta">${esc(b.settings.systemName)} · ${esc(b.settings.orgName)} · พิมพ์เมื่อ ${fmtDT(new Date().toISOString())} โดย ${esc(App.user.displayName)}</div>${inner}<div class="meta" style="margin-top:14px">เอกสารนี้มีข้อมูลสุขภาพ ใช้เพื่อการดูแลสุขภาพประชาชนเท่านั้น (PDPA)</div></div>`;
+  document.body.classList.add('printing');
+  setTimeout(() => { window.print(); setTimeout(() => document.body.classList.remove('printing'), 500); }, 100);
+}
+
+/* =====================================================================
+ *  SMART AI (rule-based — no external AI service)
+ * =================================================================== */
+function renderAI() {
+  const st = App.aiF || (App.aiF = { fiscalYear: currentFY(), year: '', month: '', villages: [] });
+  $('#view').innerHTML = `
+  <div class="ai-hero"><div style="position:relative;z-index:1"><h2 style="display:flex;gap:10px;align-items:center"><i data-lucide="sparkles"></i> Smart AI & Reports</h2><p style="opacity:.92;margin:6px 0 0;max-width:780px">สรุปสถานการณ์สุขภาพตำบล วิเคราะห์ปัญหา เปรียบเทียบ 12 หมู่บ้าน กลุ่มเสี่ยง ผู้ขาดนัด และผลงาน อสม. ด้วยกฎการวิเคราะห์ที่ตรวจสอบได้ บนข้อมูลรวม (aggregate) ภายในระบบ — ไม่ส่งข้อมูลระบุตัวบุคคลไปยังบริการ AI ภายนอก</p></div></div>
+  <div class="card filter-card no-print"><div class="toolbar">
+    <div class="field"><label>ปีงบประมาณ</label><select class="input" data-af="fiscalYear">${yearOptions(st.fiscalYear, true)}</select></div>
+    <div class="field"><label>ปีปฏิทิน</label><select class="input" data-af="year">${yearOptions(st.year, false)}</select></div>
+    <div class="field"><label>เดือน</label><select class="input" data-af="month">${monthOptions(st.month)}</select></div>
+    ${App.boot.villages.length > 1 ? `<div class="field"><label>หมู่บ้าน</label>${villageSelect(st.villages, 'ai')}</div>` : ''}
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-purple" data-act="ai-run"><i data-lucide="sparkles"></i> วิเคราะห์</button><button class="btn btn-outline" data-act="ai-print" data-kind="monthly"><i data-lucide="calendar"></i> รายงานประจำเดือน</button><button class="btn btn-outline" data-act="ai-print" data-kind="exec"><i data-lucide="briefcase"></i> รายงานผู้บริหาร</button></div>
+  </div></div>
+  <div id="aiOut">${stateBox('empty', 'กด "วิเคราะห์" เพื่อสรุปสถานการณ์', '')}</div>`;
+  icons();
+}
+async function runAI() {
+  const out = $('#aiOut'); out.innerHTML = `<div class="card">${stateBox('loading', 'กำลังวิเคราะห์ข้อมูล...')}</div>`;
+  try {
+    const d = await api('getAISummary', { filters: App.aiF }, { timeout: 90000 });
+    App.lastData.ai = d;
+    const rg = d.riskGroups;
+    out.innerHTML = `<div class="alert alert-ai"><i data-lucide="shield-check"></i><div>${esc(d.disclaimer)}</div></div>
+    <div class="grid g3 mb">
+      <div class="card"><div class="card-title"><h3><i data-lucide="clipboard-list" style="color:var(--purple-600)"></i> สรุปสถานการณ์</h3></div><ul class="ai-list">${d.insights.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+      <div class="card"><div class="card-title"><h3><i data-lucide="alert-triangle" style="color:var(--orange-500)"></i> ปัญหาที่ควรติดตาม</h3></div>${d.problems.length ? `<ul class="ai-list">${d.problems.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '<div class="muted">ไม่พบประเด็นผิดปกติตามเกณฑ์</div>'}</div>
+      <div class="card"><div class="card-title"><h3><i data-lucide="lightbulb" style="color:var(--em-600)"></i> ข้อเสนอแนะ</h3></div><ul class="ai-list">${d.recommendations.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+    </div>
+    <div class="card mb"><div class="card-title"><h3><i data-lucide="target"></i> วิเคราะห์กลุ่มเสี่ยง (ผลคัดกรองล่าสุด)</h3></div><div class="stat-tiles">
+      ${[['bpRisk', 'BP กลุ่มเสี่ยง'], ['bpSusp', 'BP สงสัยป่วย/เร่งด่วน'], ['gRisk', 'น้ำตาล กลุ่มเสี่ยง'], ['gSusp', 'น้ำตาล สงสัยป่วย/เร่งด่วน'], ['cvdHigh', 'CVD Risk สูง'], ['obese', 'BMI ≥ 25']].map(x => `<div class="stat-tile"><b>${fmtNum(rg[x[0]])}</b><span>${x[1]}</span></div>`).join('')}</div></div>
+    <div class="card mb"><div class="card-title"><h3><i data-lucide="bar-chart-3"></i> เปรียบเทียบผลการดำเนินงาน ${d.villages.length} หมู่บ้าน</h3><select class="input" id="aiMetric" style="width:auto;min-height:36px">${[['screenCoverage', 'ความครอบคลุมคัดกรอง 35+ (%)'], ['dm', 'ผู้ป่วย DM'], ['ht', 'ผู้ป่วย HT'], ['missedNcd', 'ผู้ป่วยขาดนัด'], ['followUp', 'รายการต้องติดตาม'], ['visitsDone', 'เยี่ยมบ้านแล้ว'], ['services', 'บริการ (ครั้ง)'], ['population', 'ประชากร']].map(m => `<option value="${m[0]}">${m[1]}</option>`).join('')}</select></div><div class="chart-box tall"><canvas id="cAi"></canvas></div></div>
+    <div class="grid g2 mb">
+      <div class="card"><div class="card-title"><h3><i data-lucide="award"></i> อสม. ผลงานสูงสุด 10 อันดับ</h3><small>คะแนน = เยี่ยมบ้าน×3 + คัดกรอง×2 + บริการ + ภารกิจเสร็จ×2</small></div>${d.volunteerTop.length ? `<div class="table-wrap"><table class="dtable"><thead><tr><th>#</th><th>ชื่อ</th><th>หมู่</th><th class="num">เยี่ยมบ้าน</th><th class="num">คัดกรอง</th><th class="num">คะแนน</th></tr></thead><tbody>${d.volunteerTop.map((v, i) => `<tr><td>${i + 1}</td><td>${esc(v.name)}</td><td>${v.villageNo}</td><td class="num">${fmtNum(v.homeVisits)}</td><td class="num">${fmtNum(v.screenings)}</td><td class="num"><b>${fmtNum(v.score)}</b></td></tr>`).join('')}</tbody></table></div>` : stateBox('empty', 'ยังไม่มีข้อมูล อสม.', '')}</div>
+      <div class="card"><div class="card-title"><h3><i data-lucide="users"></i> สรุปผลงาน อสม. รายหมู่บ้าน</h3></div>${d.volunteerByVillage.length ? `<div class="table-wrap"><table class="dtable"><thead><tr><th>หมู่</th><th class="num">อสม.</th><th class="num">เยี่ยมบ้าน</th><th class="num">คะแนนรวม</th><th class="num">เฉลี่ย/คน</th></tr></thead><tbody>${d.volunteerByVillage.map(v => `<tr><td>${v.villageNo}</td><td class="num">${v.volunteers}</td><td class="num">${fmtNum(v.visits)}</td><td class="num">${fmtNum(v.score)}</td><td class="num">${v.volunteers ? (v.score / v.volunteers).toFixed(1) : '-'}</td></tr>`).join('')}</tbody></table></div>` : stateBox('empty', 'ยังไม่มีข้อมูล', '')}</div>
+    </div>`;
+    icons();
+    const draw = () => { const m = $('#aiMetric').value; makeChart('cAi', { type: 'bar', data: { labels: d.villages.map(v => 'หมู่ ' + v.villageNo), datasets: [barDs($('#aiMetric').selectedOptions[0].text, d.villages.map(v => v[m]), PALETTE[6])] }, options: chartBase({ plugins: { legend: { display: false } } }) }); };
+    $('#aiMetric').onchange = draw; draw();
+  } catch (e) { out.innerHTML = `<div class="card">${stateBox('error', 'วิเคราะห์ไม่สำเร็จ', e.message, 'ai-run')}</div>`; icons(); }
+}
+async function printAIReport(kind) {
+  const f = Object.assign({}, App.aiF);
+  if (kind === 'monthly' && !f.month) { const now = new Date(); f.month = now.getMonth() + 1; f.year = now.getFullYear() + 543; f.fiscalYear = ''; }
+  try {
+    const [ai, rep] = await Promise.all([api('getAISummary', { filters: f }, { timeout: 90000 }), api('getReport', { type: 'village', filters: f }, { timeout: 90000 })]);
+    const list = a => `<ul>${a.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+    const tbl = `<table><thead><tr>${rep.columns.map(c => `<th>${esc(c.l)}</th>`).join('')}</tr></thead><tbody>${rep.rows.map(r => `<tr>${rep.columns.map(c => `<td>${typeof r[c.k] === 'number' ? fmtNum(r[c.k]) : esc(r[c.k])}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+    const title = kind === 'monthly' ? `รายงานสถานการณ์สุขภาพประจำเดือน${TH_MONTHS_FULL[f.month - 1]} ${f.year || ''}` : 'รายงานผู้บริหาร: สถานการณ์สุขภาพตำบล';
+    printHTML(title, `<div class="meta">เงื่อนไข: ${esc(filterLabel(f))}</div><h3>1. สรุปสถานการณ์</h3>${list(ai.insights)}<h3>2. ปัญหาที่ควรติดตาม</h3>${ai.problems.length ? list(ai.problems) : '<p>ไม่พบประเด็นผิดปกติตามเกณฑ์</p>'}<h3>3. ข้อเสนอแนะ</h3>${list(ai.recommendations)}<h3>4. ผลการดำเนินงานรายหมู่บ้าน</h3>${tbl}${kind === 'exec' ? `<h3>5. ผลงาน อสม. (10 อันดับ)</h3><table><thead><tr><th>ชื่อ</th><th>หมู่</th><th>เยี่ยมบ้าน</th><th>คัดกรอง</th><th>คะแนน</th></tr></thead><tbody>${ai.volunteerTop.map(v => `<tr><td>${esc(v.name)}</td><td>${v.villageNo}</td><td>${v.homeVisits}</td><td>${v.screenings}</td><td>${v.score}</td></tr>`).join('')}</tbody></table>` : ''}<p style="font-size:10px">${esc(ai.disclaimer)}</p>`);
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+/* =====================================================================
+ *  DATA QUALITY
+ * =================================================================== */
+async function renderQuality() {
+  $('#view').innerHTML = `<div class="page-head"><div><h1><span class="ph-icon"><i data-lucide="badge-check"></i></span>Dashboard คุณภาพข้อมูล</h1><p>ตรวจสอบความถูกต้อง ครบถ้วน และข้อมูลซ้ำทั้งระบบ</p></div><div class="head-actions"><button class="btn btn-outline" data-act="dq-run"><i data-lucide="refresh-cw"></i> ตรวจสอบใหม่</button><button class="btn btn-outline" data-act="dq-export"><i data-lucide="file-down"></i> Excel</button></div></div><div id="dqOut"><div class="card">${stateBox('loading', 'กำลังตรวจสอบคุณภาพข้อมูล...')}</div></div>`;
+  icons();
+  try {
+    const d = await api('getDataQuality', {}, { timeout: 120000 });
+    App.lastData.dq = d;
+    const s = d.summary;
+    $('#dqOut').innerHTML = `<div class="kpi-grid">
+      <div class="kpi k-blue"><div class="kpi-icon"><i data-lucide="database"></i></div><div class="kpi-body"><div class="kpi-label">ข้อมูลทั้งหมด</div><div class="kpi-value">${fmtNum(s.totalRecords)}</div><div class="kpi-sub">รายการ (ทุกตาราง)</div></div></div>
+      <div class="kpi k-em"><div class="kpi-icon"><i data-lucide="check-circle-2"></i></div><div class="kpi-body"><div class="kpi-label">ทะเบียนประชาชนสมบูรณ์</div><div class="kpi-value">${s.completeness}%</div><div class="kpi-sub">${fmtNum(s.populationComplete)} / ${fmtNum(s.populationTotal)} คน</div></div></div>
+      <div class="kpi k-red"><div class="kpi-icon"><i data-lucide="x-circle"></i></div><div class="kpi-body"><div class="kpi-label">ข้อมูลผิดพลาด</div><div class="kpi-value">${fmtNum(s.errors)}</div><div class="kpi-sub">ต้องแก้ไข</div></div></div>
+      <div class="kpi k-amber"><div class="kpi-icon"><i data-lucide="alert-triangle"></i></div><div class="kpi-body"><div class="kpi-label">ข้อมูลที่ต้องปรับปรุง</div><div class="kpi-value">${fmtNum(s.warnings)}</div><div class="kpi-sub">คำเตือน</div></div></div></div>
+      <div class="card mb"><div class="card-title"><h3>ความสมบูรณ์ของทะเบียนประชาชน</h3><small>${s.completeness}%</small></div><div class="progress" style="height:14px"><div style="width:${s.completeness}%"></div></div></div>
+      ${d.checks.map(c => `<details class="card mb" style="padding:0" ${c.count && c.severity === 'error' ? 'open' : ''}><summary style="padding:16px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;list-style:none"><span style="display:flex;gap:10px;align-items:center"><span class="status ${c.count ? (c.severity === 'error' ? 'st-critical' : 'st-warn') : 'st-good'}">${c.count ? (c.severity === 'error' ? 'ผิดพลาด' : 'ปรับปรุง') : 'ผ่าน'}</span><b style="font-weight:500">${esc(c.label)}</b></span><span class="tag">${fmtNum(c.count)} รายการ</span></summary>${c.count ? `<div style="padding:0 18px 16px"><div class="table-wrap"><table class="dtable"><thead><tr><th>ตาราง</th><th>รหัส</th><th>แถวในชีต</th><th>หมู่</th><th>รายละเอียด</th></tr></thead><tbody>${c.samples.map(x => `<tr><td>${esc(x.sheet)}</td><td>${esc(x.id)}</td><td>${x.row}</td><td>${esc(x.villageNo)}</td><td>${esc(x.detail)}</td></tr>`).join('')}</tbody></table></div>${c.count > c.samples.length ? `<div class="muted" style="font-size:.8rem;margin-top:6px">แสดง ${c.samples.length} จาก ${fmtNum(c.count)} รายการ</div>` : ''}</div>` : ''}</details>`).join('')}`;
+    icons();
+  } catch (e) { $('#dqOut').innerHTML = `<div class="card">${stateBox('error', 'ตรวจสอบไม่สำเร็จ', e.message, 'dq-run')}</div>`; icons(); }
+}
+
+/* =====================================================================
+ *  USERS / SETTINGS / AUDIT (admin)
+ * =================================================================== */
+async function renderUsers() {
+  $('#view').innerHTML = `<div class="page-head"><div><h1><span class="ph-icon"><i data-lucide="user-cog"></i></span>ผู้ใช้งานและสิทธิ์ (RBAC)</h1><p>กำหนดบทบาท หมู่บ้านที่รับผิดชอบ และสิทธิ์ข้อมูลสุขภาพจิต — ตรวจสอบสิทธิ์ที่ Backend ทุกคำสั่ง</p></div><div class="head-actions"><button class="btn btn-primary" data-act="user-add"><i data-lucide="user-plus"></i> เพิ่มผู้ใช้</button></div></div><div class="card" id="userOut">${stateBox('loading')}</div>`;
+  icons();
+  try {
+    const d = await api('getUsers');
+    App.users = d.rows;
+    $('#userOut').innerHTML = `<div class="table-wrap cards-wrap"><table class="dtable cards"><thead><tr><th>Username</th><th>ชื่อ</th><th>บทบาท</th><th>หมู่บ้าน</th><th>สุขภาพจิต</th><th>สถานะ</th><th>เข้าใช้ล่าสุด</th><th></th></tr></thead><tbody>${d.rows.map((u, i) => `<tr><td data-label="Username"><b>${esc(u.Username)}</b></td><td data-label="ชื่อ">${esc(u.DisplayName)}</td><td data-label="บทบาท"><span class="tag">${esc(u.RoleLabel)}</span></td><td data-label="หมู่บ้าน">${esc(u.Villages === 'ALL' ? 'ทุกหมู่บ้าน' : 'หมู่ ' + u.Villages)}</td><td data-label="สุขภาพจิต">${u.MentalAccess ? '<span class="status st-purple">มีสิทธิ์</span>' : '-'}</td><td data-label="สถานะ">${statusBadge(u.Status)} ${u.MustChangePassword ? '<span class="status st-warn">ต้องเปลี่ยนรหัส</span>' : ''} ${u.LockedUntil && new Date(u.LockedUntil) > new Date() ? '<span class="status st-critical">ถูกล็อก</span>' : ''}</td><td data-label="เข้าใช้ล่าสุด">${fmtDT(u.LastLoginAt)}</td><td data-label=""><div class="row-actions"><button class="btn btn-outline btn-sm" data-act="user-edit" data-i="${i}"><i data-lucide="pencil"></i></button><button class="btn btn-outline btn-sm" data-act="user-reset" data-i="${i}" title="ตั้งรหัสผ่านชั่วคราว"><i data-lucide="key-round"></i></button></div></td></tr>`).join('')}</tbody></table></div>`;
+    icons();
+  } catch (e) { $('#userOut').innerHTML = stateBox('error', 'โหลดไม่สำเร็จ', e.message); icons(); }
+}
+function openUserForm(u) {
+  const isNew = !u; u = u || { Role: 'VOLUNTEER', Status: 'active', Villages: '' };
+  const roles = [['ADMIN', 'ผู้ดูแลระบบ'], ['OFFICER', 'เจ้าหน้าที่ รพ.สต.'], ['VOLUNTEER', 'อสม.'], ['EXECUTIVE', 'ผู้บริหาร']];
+  const vsel = String(u.Villages || '').split(',').map(Number);
+  openModal({ id: 'user', title: `<i data-lucide="user-cog"></i> ${isNew ? 'เพิ่มผู้ใช้' : 'แก้ไขผู้ใช้ ' + esc(u.Username)}`, body: `<div id="uErr"></div><div class="form-grid">
+    ${isNew ? '<div class="field"><label>Username <span class="req">*</span></label><input class="input" id="uName" autocapitalize="none" maxlength="32" placeholder="a-z 0-9 _ . -"></div>' : ''}
+    <div class="field"><label>ชื่อที่แสดง</label><input class="input" id="uDisp" value="${esc(u.DisplayName || '')}" maxlength="100"></div>
+    <div class="field"><label>บทบาท</label><select class="input" id="uRole">${roles.map(r => `<option value="${r[0]}" ${u.Role === r[0] ? 'selected' : ''}>${r[1]}</option>`).join('')}</select></div>
+    <div class="field"><label>สถานะ</label><select class="input" id="uStatus"><option value="active" ${u.Status === 'active' ? 'selected' : ''}>ใช้งาน</option><option value="disabled" ${u.Status === 'disabled' ? 'selected' : ''}>ระงับ</option></select></div>
+    <div class="field full" id="uVilBox"><label>หมู่บ้านที่รับผิดชอบ (สำหรับ อสม.)</label><div class="chips">${Array.from({ length: App.boot.villageCount }, (_, i) => i + 1).map(n => `<label class="chip"><input type="checkbox" class="uVil" value="${n}" ${vsel.includes(n) ? 'checked' : ''}> หมู่ ${n}</label>`).join('')}</div></div>
+    <div class="field"><label>รหัส อสม. (ถ้ามี)</label><select class="input" id="uVol">${opts(App.boot.volunteers.map(v => [v.id, v.name + ' (ม.' + v.villageNo + ')']), u.VolunteerID || '', '— ไม่ระบุ —')}</select></div>
+    <div class="field"><label>สิทธิ์ข้อมูลสุขภาพจิต</label><select class="input" id="uMental"><option value="false">ไม่มี</option><option value="true" ${u.MentalAccess ? 'selected' : ''}>มีสิทธิ์ (เฉพาะผู้ดูแล/เจ้าหน้าที่)</option></select></div>
+    ${isNew ? '<div class="field full"><label>รหัสผ่านเริ่มต้น <span class="req">*</span></label><input class="input" id="uPw" type="password" autocomplete="new-password"><span class="hint">ผู้ใช้ต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งแรก</span></div>' : (u.LockedUntil ? '<div class="field full"><label class="chip" style="width:max-content"><input type="checkbox" id="uUnlock" checked> ปลดล็อกบัญชี</label></div>' : '')}
+  </div>`, foot: `<button class="btn btn-ghost" data-act="close-modal">ยกเลิก</button><button class="btn btn-primary" data-act="user-save"><i data-lucide="save"></i> บันทึก</button>` });
+  App.editUser = u; App.editUserNew = isNew;
+  const toggle = () => { $('#uVilBox').style.display = $('#uRole').value === 'VOLUNTEER' ? '' : 'none'; };
+  $('#uRole').onchange = toggle; toggle();
+}
+async function saveUserForm() {
+  const isNew = App.editUserNew, u = App.editUser;
+  const payload = { UserID: isNew ? '' : u.UserID, DisplayName: $('#uDisp').value.trim(), Role: $('#uRole').value, Status: $('#uStatus').value, Villages: $$('.uVil:checked').map(x => x.value).join(','), VolunteerID: $('#uVol').value, MentalAccess: $('#uMental').value === 'true', unlock: !!($('#uUnlock') && $('#uUnlock').checked) };
+  if (isNew) { payload.Username = $('#uName').value.trim(); payload.Password = $('#uPw').value; const pol = pwPolicy(payload.Password, payload.Username); if (pol) { $('#uErr').innerHTML = `<div class="alert alert-error">${esc(pol)}</div>`; return; } }
+  try { const d = await api('saveUser', { user: payload }); closeModal(); toast(d.__message || 'บันทึกแล้ว'); renderUsers(); }
+  catch (e) { $('#uErr').innerHTML = `<div class="alert alert-error"><i data-lucide="alert-circle"></i><div>${esc(e.message)}</div></div>`; icons(); }
+}
+function openResetPw(u) {
+  openModal({ id: 'rpw', size: 'sm', title: '<i data-lucide="key-round"></i> ตั้งรหัสผ่านชั่วคราว', body: `<div id="rErr"></div><p>ผู้ใช้ <b>${esc(u.Username)}</b> จะต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบ และ Session เดิมทั้งหมดจะสิ้นสุด</p><div class="field"><label>รหัสผ่านชั่วคราว</label><input class="input" id="rPw" type="password" autocomplete="new-password"></div>`, foot: `<button class="btn btn-ghost" data-act="close-modal">ยกเลิก</button><button class="btn btn-primary" id="rSave">บันทึก</button>` });
+  $('#rSave').onclick = async () => { const pw = $('#rPw').value, pol = pwPolicy(pw, u.Username); if (pol) { $('#rErr').innerHTML = `<div class="alert alert-error">${esc(pol)}</div>`; return; } try { await api('resetUserPassword', { userId: u.UserID, newPassword: pw }); closeModal(); toast('ตั้งรหัสผ่านชั่วคราวแล้ว'); renderUsers(); } catch (e) { $('#rErr').innerHTML = `<div class="alert alert-error">${esc(e.message)}</div>`; } };
+}
+async function renderSettings() {
+  $('#view').innerHTML = `<div class="page-head"><div><h1><span class="ph-icon"><i data-lucide="settings"></i></span>ตั้งค่าระบบ</h1><p>การตั้งค่าที่เป็นความลับ (Secret) เก็บใน Script Properties ฝั่งเซิร์ฟเวอร์ ไม่แสดงที่หน้านี้</p></div><div class="head-actions"><button class="btn btn-outline" data-act="backup-now"><i data-lucide="hard-drive-download"></i> สำรองข้อมูลตอนนี้</button></div></div><div id="setOut"><div class="card">${stateBox('loading')}</div></div>`;
+  icons();
+  try {
+    const d = await api('getSystemSettings');
+    $('#setOut').innerHTML = `${d.defaultPasswordUsers && d.defaultPasswordUsers.length ? `<div class="alert alert-warn"><i data-lucide="shield-alert"></i><div>ผู้ใช้ที่ยังใช้รหัสผ่านเริ่มต้น/ชั่วคราว: <b>${d.defaultPasswordUsers.map(esc).join(', ')}</b> — ระบบจะไม่อนุญาตให้เข้าถึงข้อมูลจนกว่าจะเปลี่ยนรหัสผ่าน</div></div>` : ''}
+    <div class="card mb"><div class="card-title"><h3>การตั้งค่าทั่วไป</h3><small>เวอร์ชัน ${esc(d.version)}</small></div><div class="form-grid">${d.settings.map(s => `<div class="field ${s.key === 'PDPA_NOTICE' ? 'full' : ''}"><label>${esc(s.description || s.key)} <small class="muted">[${esc(s.key)}]</small></label>${s.editable ? (s.key === 'PDPA_NOTICE' ? `<textarea class="input" data-set="${esc(s.key)}">${esc(s.value)}</textarea>` : `<input class="input" data-set="${esc(s.key)}" value="${esc(s.value)}">`) : `<div class="input" style="background:var(--surface-2)">${esc(s.key === 'LAST_IMPORT_AT' ? fmtDT(s.value) : s.value) || '-'}</div>`}</div>`).join('')}</div>
+    <div style="margin-top:16px"><button class="btn btn-primary" data-act="settings-save"><i data-lucide="save"></i> บันทึกการตั้งค่า</button></div></div>
+    <div class="card"><div class="card-title"><h3><i data-lucide="shield-check"></i> มาตรการความปลอดภัยที่เปิดใช้งาน</h3></div><ul class="ai-list" style="font-size:.9rem">
+      <li>รหัสผ่านจัดเก็บแบบ HMAC-SHA256 วนซ้ำ + Salt รายบุคคล + Pepper ฝั่งเซิร์ฟเวอร์ (ไม่มี Plain Text)</li>
+      <li>Session Token สุ่ม จัดเก็บเป็นค่าแฮชใน CacheService หมดอายุอัตโนมัติ (ไม่เกิน 6 ชั่วโมง/ไม่ใช้งาน) และส่งใน Body เท่านั้น</li>
+      <li>จำกัดการ Login ผิด ล็อกบัญชีชั่วคราว และบังคับเปลี่ยนรหัสผ่านเริ่มต้น</li>
+      <li>RBAC + จำกัดหมู่บ้าน + แยกสิทธิ์ข้อมูลสุขภาพจิต ตรวจสอบที่ Backend ทุกคำสั่ง</li>
+      <li>เลขประจำตัวประชาชนเก็บเป็น HMAC (สำหรับตรวจซ้ำ) และค่าปกปิดเท่านั้น</li>
+      <li>Audit Log บันทึกการเข้าสู่ระบบ การแก้ไข การนำเข้า การส่งออก และการเปิดดูข้อมูลอ่อนไหว</li>
+      <li>สำรองข้อมูลรายวัน: เรียก installDailyBackupTrigger() หนึ่งครั้งใน Apps Script Editor</li></ul></div>`;
+    icons();
+  } catch (e) { $('#setOut').innerHTML = `<div class="card">${stateBox('error', 'โหลดไม่สำเร็จ', e.message)}</div>`; icons(); }
+}
+async function renderAudit(page = 1) {
+  const q = App.auditQ || '';
+  if (!$('#auditOut')) {
+    $('#view').innerHTML = `<div class="page-head"><div><h1><span class="ph-icon"><i data-lucide="scroll-text"></i></span>Audit Log</h1><p>ประวัติการเข้าถึงและการเปลี่ยนแปลงข้อมูล</p></div></div><div class="card filter-card"><div class="toolbar"><div class="field search"><label>ค้นหา</label><div class="search-box"><i data-lucide="search"></i><input class="input" id="auditSearch" value="${esc(q)}" placeholder="ผู้ใช้ / การกระทำ / ตาราง / รหัส"></div></div></div></div><div class="card" id="auditOut"></div>`;
+    icons();
+    $('#auditSearch').oninput = debounce(e => { App.auditQ = e.target.value; renderAudit(1); }, 400);
+  }
+  $('#auditOut').innerHTML = stateBox('loading'); icons();
+  try {
+    const d = await api('getAuditLog', { page, pageSize: 50, search: App.auditQ || '' });
+    $('#auditOut').innerHTML = d.rows.length ? `<div class="table-wrap cards-wrap"><table class="dtable cards"><thead><tr><th>เวลา</th><th>ผู้ใช้</th><th>บทบาท</th><th>การกระทำ</th><th>ตาราง</th><th>รหัส</th><th>หมู่</th><th>รายละเอียด</th><th>ผล</th></tr></thead><tbody>${d.rows.map(r => `<tr><td data-label="เวลา">${fmtDT(r.Timestamp)}</td><td data-label="ผู้ใช้">${esc(r.Username)}</td><td data-label="บทบาท">${esc(r.Role)}</td><td data-label="การกระทำ"><span class="tag">${esc(r.Action)}</span></td><td data-label="ตาราง">${esc(r.Sheet)}</td><td data-label="รหัส">${esc(r.RecordID)}</td><td data-label="หมู่">${esc(r.VillageNo)}</td><td data-label="รายละเอียด" style="max-width:260px;word-break:break-all">${esc(r.Detail)}</td><td data-label="ผล">${r.Result === 'OK' ? '<span class="status st-good">OK</span>' : `<span class="status st-critical">${esc(r.Result)}</span>`}</td></tr>`).join('')}</tbody></table></div><div class="pager"><div>${fmtNum(d.total)} รายการ</div><div class="pg"><button class="btn btn-outline btn-sm" data-act="audit-page" data-p="${d.page - 1}" ${d.page <= 1 ? 'disabled' : ''}><i data-lucide="chevron-left"></i></button><span>หน้า ${d.page}/${d.pages}</span><button class="btn btn-outline btn-sm" data-act="audit-page" data-p="${d.page + 1}" ${d.page >= d.pages ? 'disabled' : ''}><i data-lucide="chevron-right"></i></button></div></div>` : stateBox('empty', 'ไม่พบรายการ', '');
+    icons();
+  } catch (e) { $('#auditOut').innerHTML = stateBox('error', 'โหลดไม่สำเร็จ', e.message); icons(); }
+}
+
+/* =====================================================================
+ *  EVENT DELEGATION
+ * =================================================================== */
+const ACTS = {
+  'toggle-pw': b => { const i = document.getElementById(b.dataset.target); i.type = i.type === 'password' ? 'text' : 'password'; },
+  'show-config': () => { $('#apiConfig').hidden = !$('#apiConfig').hidden; $('#cfgUrl').value = apiUrl(); },
+  'save-url': () => { const v = $('#cfgUrl').value.trim(); if (v && !/^https:\/\/script\.google(usercontent)?\.com\//.test(v)) return toast('URL ต้องเป็น Google Apps Script Web App (https://script.google.com/...)', 'error'); safeLS('bn_gas_url', v || null); toast('บันทึก URL แล้ว'); checkApi(); },
+  'open-sidebar': () => { document.body.classList.add('sb-open'); $('#overlay').hidden = false; },
+  'close-sidebar': () => { document.body.classList.remove('sb-open'); $('#overlay').hidden = true; },
+  'nav': b => navigate(b.dataset.view),
+  'refresh-view': () => { App.dashStale = true; route(); },
+  'toggle-noti': () => { $('#profilePanel').hidden = true; const p = $('#notiPanel'); p.hidden = !p.hidden; if (!p.hidden) { renderNotiList(); loadNotifications(true); } },
+  'toggle-profile': () => { $('#notiPanel').hidden = true; $('#profilePanel').hidden = !$('#profilePanel').hidden; },
+  'noti-read-all': async () => { try { await api('markNotificationRead', { all: true }, { silent: true }); loadNotifications(true); } catch (e) { toast(e.message, 'error'); } },
+  'open-noti': async b => { try { await api('markNotificationRead', { id: b.dataset.id }, { silent: true }); } catch (e) {} $('#notiPanel').hidden = true; loadNotifications(true); const v = SHEET_VIEW[b.dataset.sheet]; if (v && canView(v)) navigate(v); },
+  'noti-new': () => {
+    $('#notiPanel').hidden = true;
+    openModal({ id: 'noti', size: 'sm', title: '<i data-lucide="megaphone"></i> ส่งประกาศ/แจ้งเตือน', body: `<div id="nErr"></div><div class="field mb"><label>หัวข้อ <span class="req">*</span></label><input class="input" id="nTitle" maxlength="200"></div><div class="field mb"><label>ข้อความ</label><textarea class="input" id="nMsg" maxlength="1000"></textarea></div><div class="form-grid"><div class="field"><label>ผู้รับ</label><select class="input" id="nRole"><option value="ALL">ทุกคน</option><option value="VOLUNTEER">อสม.</option><option value="OFFICER">เจ้าหน้าที่</option><option value="EXECUTIVE">ผู้บริหาร</option></select></div><div class="field"><label>หมู่บ้าน</label><select class="input" id="nVil">${opts(App.boot.villages.map(v => [v.no, 'หมู่ ' + v.no]), '', 'ทุกหมู่บ้าน')}</select></div><div class="field full"><label>ระดับ</label><select class="input" id="nLevel"><option value="info">ทั่วไป</option><option value="warning">เตือน</option><option value="critical">เร่งด่วน</option></select></div></div><div class="hint" style="margin-top:8px">ห้ามใส่ข้อมูลระบุตัวบุคคลหรือข้อมูลสุขภาพในประกาศ</div>`, foot: '<button class="btn btn-ghost" data-act="close-modal">ยกเลิก</button><button class="btn btn-primary" data-act="noti-send"><i data-lucide="send"></i> ส่ง</button>' });
+  },
+  'noti-send': async () => { const t = $('#nTitle').value.trim(); if (!t) { $('#nErr').innerHTML = '<div class="alert alert-error">กรุณากรอกหัวข้อ</div>'; return; } try { await api('createNotification', { title: t, message: $('#nMsg').value.trim(), targetRole: $('#nRole').value, targetVillage: $('#nVil').value, level: $('#nLevel').value }); closeModal(); toast('ส่งประกาศแล้ว'); loadNotifications(true); } catch (e) { $('#nErr').innerHTML = `<div class="alert alert-error">${esc(e.message)}</div>`; } },
+  'change-password': () => { $('#profilePanel').hidden = true; openChangePassword(false); },
+  'submit-chpw': submitChangePassword,
+  'logout': () => { $('#profilePanel').hidden = true; logout(); },
+  'close-modal': () => closeModal(),
+  'print': () => window.print(),
+  'toggle-filter': b => { const c = b.closest('.filter-card'); c.classList.toggle('collapsed'); App.dashFilterOpen = !c.classList.contains('collapsed'); },
+  // dashboard
+  'dash-refresh': () => loadDashboard(true),
+  'dash-export': exportDashboard,
+  'dash-reset': () => { App.dashFilters = defaultDashFilters(); renderDashboard(); },
+  'dash-v': b => { const f = App.dashFilters; if (b.dataset.v === 'all') f.villages = []; else { const n = +b.dataset.v; f.villages = f.villages.includes(n) ? f.villages.filter(x => x !== n) : f.villages.concat(n); } renderDashboard(); },
+  // modules
+  'mod-tab': b => { const st = modState(App.view); st.tab = b.dataset.sheet; st.page = 1; st.filters = {}; renderModule(App.view); },
+  'mod-reload': () => loadModule(),
+  'mod-reset': () => { const st = modState(App.view); Object.assign(st, { page: 1, search: '', villages: [], filters: {}, year: '', month: '', ageGroup: '', sex: '' }); renderModule(App.view); },
+  'mod-page': b => { modState(App.view).page = +b.dataset.p; loadModule(); },
+  'mod-sumfilter': b => { const st = modState(App.view); const f = sc(st.tab).fields.find(x => x.k === b.dataset.k); if (!f || !(f.filt)) return; st.filters[b.dataset.k] = st.filters[b.dataset.k] === b.dataset.v ? '' : (b.dataset.v === 'ไม่ระบุ' ? '' : b.dataset.v); st.page = 1; renderModule(App.view); },
+  'mod-add': () => openForm(modState(App.view).tab, null),
+  'mod-view': b => openDetail(modState(App.view).tab, App.lastData.list.rows[+b.dataset.i]),
+  'mod-edit': b => openForm(modState(App.view).tab, App.lastData.list.rows[+b.dataset.i]),
+  'detail-edit': () => { const d = App.detail; openForm(d.sheet, d.r); },
+  'mod-export': b => exportModule(b.dataset.fmt),
+  'form-save': saveForm,
+  'profile': b => openProfile(b.dataset.pid),
+  'pp-pick': b => { const p = App.ppRows[+b.dataset.i]; $('#ppBox').outerHTML = personPicker({ PersonID: p.PersonID, _personName: p.name, VillageNo: p.VillageNo }); icons(); },
+  'pp-clear': () => { $('#ppBox').outerHTML = personPicker({}); icons(); const i = $('#ppInput'); if (i) i.focus(); },
+  // import
+  'imp-template': downloadTemplate,
+  'imp-validate': validateImport,
+  'imp-pfilter': b => renderPreview(b.dataset.f),
+  'imp-commit': commitImport,
+  'imp-errors': b => downloadImportErrors(b.dataset.src),
+  'imp-history': showImportHistory,
+  // reports & ai
+  'rep-type': b => { App.rep.type = b.dataset.t; renderReports(); runReport(); },
+  'rep-run': runReport,
+  'rep-export': b => { const d = App.lastData.report; if (d) downloadRows(d.columns, d.rows, `${d.title}_${todayISO()}`, b.dataset.fmt); },
+  'rep-print': () => { const d = App.lastData.report; if (d) printHTML(d.title, `<div class="meta">${esc(filterLabel(repFilters()))}</div>` + reportTable(d)); },
+  'ai-run': runAI,
+  'ai-print': b => printAIReport(b.dataset.kind),
+  'dq-run': renderQuality,
+  'dq-export': () => { const d = App.lastData.dq; if (!d) return; const rows = d.checks.flatMap(c => c.samples.map(s => ({ k1: c.label, k2: c.severity, k3: s.sheet, k4: s.id, k5: s.row, k6: s.villageNo, k7: s.detail }))); downloadRows([{ k: 'k1', l: 'รายการตรวจ' }, { k: 'k2', l: 'ระดับ' }, { k: 'k3', l: 'ตาราง' }, { k: 'k4', l: 'รหัส' }, { k: 'k5', l: 'แถว' }, { k: 'k6', l: 'หมู่' }, { k: 'k7', l: 'รายละเอียด' }], rows, 'DataQuality_' + todayISO(), 'xlsx'); },
+  // admin
+  'user-add': () => openUserForm(null),
+  'user-edit': b => openUserForm(App.users[+b.dataset.i]),
+  'user-save': saveUserForm,
+  'user-reset': b => openResetPw(App.users[+b.dataset.i]),
+  'settings-save': async () => { const s = $$('[data-set]').map(el => ({ key: el.dataset.set, value: el.value })); try { await api('saveSettings', { settings: s }); toast('บันทึกการตั้งค่าแล้ว'); refreshBootLists(); } catch (e) { toast(e.message, 'error'); } },
+  'backup-now': async () => { if (!(await confirmBox('<i data-lucide="hard-drive-download"></i> สำรองข้อมูล', 'สร้างสำเนา Google Sheets ฐานข้อมูลไปยัง Google Drive ของบัญชีที่ Deploy?'))) return; try { const d = await api('backupNow', {}, { timeout: 120000 }); toast('สำรองข้อมูลแล้ว: ' + d.name); } catch (e) { toast(e.message, 'error'); } },
+  'audit-page': b => renderAudit(+b.dataset.p)
+};
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-act]');
+  if (!e.target.closest('.dropdown') && !e.target.closest('[data-act="toggle-noti"],[data-act="toggle-profile"]')) { $('#notiPanel').hidden = true; $('#profilePanel').hidden = true; }
+  if (!e.target.closest('details.vsel')) $$('details.vsel[open]').forEach(d => d.open = false);
+  if (e.target.classList.contains('modal-back') && e.target.dataset.closable) { closeModal(); return; }
+  if (!a) return;
+  const fn = ACTS[a.dataset.act];
+  if (fn) { if (a.tagName === 'A') e.preventDefault(); fn(a, e); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.df !== undefined) { App.dashFilters[t.dataset.df] = t.value === '' ? '' : (['fiscalYear', 'year', 'month'].includes(t.dataset.df) ? +t.value : t.value); renderDashboard(); return; }
+  if (t.dataset.mf !== undefined) { const st = modState(App.view); st.filters[t.dataset.mf] = t.value; st.page = 1; loadModule(); return; }
+  if (t.dataset.ms !== undefined) { const st = modState(App.view); st[t.dataset.ms] = t.value === '' ? '' : (['year', 'month'].includes(t.dataset.ms) ? +t.value : t.value); st.page = 1; loadModule(); return; }
+  if (t.dataset.rf !== undefined) { App.rep[t.dataset.rf] = t.value === '' ? '' : +t.value; return; }
+  if (t.dataset.af !== undefined) { App.aiF[t.dataset.af] = t.value === '' ? '' : +t.value; return; }
+  if (t.dataset.actChange === 'mod-pagesize') { const st = modState(App.view); st.pageSize = +t.value; st.page = 1; loadModule(); return; }
+  if (t.dataset.vctx) {
+    const ctx = t.dataset.vctx;
+    const target = ctx === 'mod' ? modState(App.view) : ctx === 'rep' ? App.rep : App.aiF;
+    if (t.value === 'all') target.villages = [];
+    else { const n = +t.value; target.villages = t.checked ? [...new Set(target.villages.concat(n))] : target.villages.filter(x => x !== n); }
+    const det = t.closest('details.vsel');
+    det.outerHTML = villageSelect(target.villages, ctx);
+    icons();
+    const again = $(`input[data-vctx="${ctx}"][value="${t.value}"]`); if (again) again.closest('details').open = true;
+    if (ctx === 'mod') { target.page = 1; loadModule(); }
+  }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'modSearch') { modSearchDebounced(e.target.value); }
+  if (e.target.id === 'ppInput') personSearch(e.target.value);
+});
+const modSearchDebounced = debounce(v => { const st = modState(App.view); st.search = v.trim(); st.page = 1; loadModule(); }, 450);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { const m = $('.modal-back[data-closable]'); if (m) closeModal(); $('#notiPanel').hidden = true; $('#profilePanel').hidden = true; } });
+window.addEventListener('hashchange', route);
+window.addEventListener('online', () => { $('#offlineBar').hidden = true; toast('กลับมาออนไลน์แล้ว', 'info'); });
+window.addEventListener('offline', () => { $('#offlineBar').hidden = false; icons(); });
+window.addEventListener('afterprint', () => document.body.classList.remove('printing'));
+$('#loginForm').addEventListener('submit', doLogin);
+
+/* =====================================================================
+ *  INIT
+ * =================================================================== */
+(async function init() {
+  icons();
+  if (!navigator.onLine) $('#offlineBar').hidden = false;
+  const saved = safeSS('bn_token');
+  if (saved && apiUrl()) {
+    App.token = saved;
+    try { const v = await api('validateSession', {}, { noAuthRedirect: true, retry: true }); App.user = v.user; await loadBoot(); return; }
+    catch (e) { if (e.code === 'MUST_CHANGE_PASSWORD') return; App.token = null; safeSS('bn_token', null); }
+  }
+  showLogin();
+})();
+</script>
+</body>
+</html>
